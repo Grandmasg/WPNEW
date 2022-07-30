@@ -1,0 +1,332 @@
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-primary">
+  <div class="container-xl">
+    <a class="navbar-brand" [routerLink]="['/daily', '0', '-']">Grandmasg</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarColor01">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="option === 'daily'" (click)="Change('daily')" [routerLink]="['/s/daily', offset, teamname]">Daily</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="option === 'weekly'" (click)="Change('weekly')" [routerLink]="['/s/weekly', offset, teamname]">Weekly</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="option === 'monthly'" (click)="Change('monthly')" [routerLink]="['/s/monthly', offset, teamname]">Monthly</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="option === 'yearly'" (click)="Change('yearly')" [routerLink]="['/s/yearly', offset, teamname]">Yearly</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="option === 'overall'" (click)="Change('overall')" [routerLink]="['/o/overall', offset, teamname]">Overall</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="option === 'xml'" (click)="Change('xml')" [routerLink]="['/x/xml', offset, teamname]">Xml</a>
+        </li>
+        <li ngbDropdown class="nav-item dropdown">
+          <a  ngbDropdownToggle class="nav-link dropdown-toggle" href="#" id="team" data-bs-toggle="dropdown" aria-expanded="false">Subteam</a>
+          <ul ngbDropdownMenu class="dropdown-menu scrollable-menu" aria-labelledby="team">
+            <li><a class="dropdown-item" (click)="onSelectTeam('-')" [ngClass]="{ active: '-' == teamname }">-</a></li>
+            <li><a *ngFor="let team of teams" [ngClass]="{ active: team.teamname == teamname }" (click)="onSelectTeam(team.teamname)" on-change="onSelectTeam(team.teamname)" class="dropdown-item"
+              >{{ team.team }} <small>({{ team.aantal }})</small></a
+            ></li>
+          </ul>
+        </li>
+      </ul>
+      <form class="d-flex">
+        <div class="input-group">
+            <span class="input-group-text" id="fake"><i class="fa fa-search fa-lg"></i></span>
+            <input type="text" class="form-control" placeholder="Search" name="search" [ngModel]="filterText" (ngModelChange)="applyFilter($event)">
+        </div>
+      </form>
+    </div>
+  </div>
+</nav>
+
+<div class="container-xl content mb-4">
+  <div class="form-group">
+    <div class="input-group date">
+      <form class="form-inline">
+        <div class="form-group">
+          <div class="input-group">
+            <input class="form-control" placeholder="yyyy-MM-dd" name="dp" [(ngModel)]="model" (ngModelChange)="onSelectDate($event)" ngbDatepicker #d="ngbDatepicker">
+            <div class="input-group-append">
+              <button class="btn btn-outline-primary" (click)="d.toggle()" type="button"><i class="fa fa-calendar fa-lg"></i></button>
+            </div>
+          </div>
+        </div>
+      </form>
+      <div>&nbsp;&nbsp;</div>
+      <button class="btn btn-sm btn-outline-primary mr-2" (click)="select('back')" title="Previous day">
+        <i class="fa fa-angle-double-left fa-lg"></i>
+      </button>
+      <div>&nbsp;</div>
+      <button class="btn btn-sm btn-outline-primary mr-2" (click)="select('forward')" title="Next day">
+        <i class="fa fa-angle-double-right fa-lg"></i>
+      </button>
+      <div>&nbsp;</div>
+      <button class="btn btn-sm btn-outline-primary mr-2" [class.active]="+offset === 0" (click)="select('today')">
+        Today
+      </button>
+      <div>&nbsp;</div>
+      <button class="btn btn-sm btn-outline-primary mr-2" [class.active]="+offset === -1" (click)="select('yesterday')">
+        Yesterday
+      </button>
+    </div>
+    <br />
+    <div *ngIf="!loading" class="col-xs-1 text-center" [hidden]="teamname == '-'">
+      <h1>{{ teamname }}</h1>
+    </div>
+    <div class="jumbotron">
+      <h3>{{ this.option | titlecase }} {{ date | date: 'dd-MM-yyyy' }}</h3>
+    </div>
+  </div>
+  <br />
+
+  <div *ngIf="(ALCchanged | json) !== '[]' && !loading && option == 'daily'" class="mat-elevation-z8">
+    Name changes:
+    <table>
+      <tr class="header">
+        <th *ngFor="let applicant of ALCchanged | keyvalue">
+          {{applicant.key}}
+        </th>
+      </tr>
+      <tr class="data">
+        <td *ngFor="let applicant of ALCchanged | keyvalue">
+          {{applicant.value}}
+        </td>
+      </tr>
+    </table>
+  </div>
+  <br *ngIf="(ALCchanged | json) !== '[]' && !loading && option == 'daily'" />
+
+  <!--<div>{{ALCadded | json}}</div>-->
+  <div *ngIf="(ALCadded | json) !== '[]' && !loading && option == 'daily'" class="mat-elevation-z8">
+    Joined users:
+    <table>
+      <tr class="header">
+        <th>Date Added</th>
+        <th>Username</th>
+        <th>Keys</th>
+        <th>Clicks</th>
+        <th>Downloads</th>
+        <th>Upload</th>
+        <th>Uptime</th>
+        <th>Pulses</th>
+      </tr>
+      <tr class="data">
+        <td>{{ALCadded.datum}}</td>
+        <td>{{ALCadded.Username}}</td>
+        <td>{{ALCadded.Keys1 | number: '1.':'nl' }}</td>
+        <td>{{ALCadded.Clicks | number: '1.':'nl' }}</td>
+        <td>{{ALCadded.Download}}</td>
+        <td>{{ALCadded.Upload}}</td>
+        <td>{{ALCadded.UptimeSeconds | value: 'hms':'' }}</td>
+        <td>{{ALCadded.Pulses | number: '1.':'nl' }}</td>
+      </tr>
+    </table>
+  </div>
+  <br *ngIf="(ALCadded | json) !== '[]' && !loading && option == 'daily'" />
+
+
+  <!--<div>{{ALCleft | json}}</div>-->
+  <div *ngIf="(ALCleft | json) !== '[]' && !loading && option == 'daily'" class="mat-elevation-z8">
+    Left users:
+    <table>
+      <tr class="header">
+        <th>Date Left</th>
+        <th>Username</th>
+        <th>Keys</th>
+        <th>Clicks</th>
+        <th>Downloads</th>
+        <th>Upload</th>
+        <th>Uptime</th>
+        <th>Pulses</th>
+      </tr>
+      <tr class="data">
+        <td>{{ALCleft.datum}}</td>
+        <td>{{ALCleft.Username}}</td>
+        <td>{{ALCleft.Keys1 | number: '1.':'nl' }}</td>
+        <td>{{ALCleft.Clicks | number: '1.':'nl' }}</td>
+        <td>{{ALCleft.Download}}</td>
+        <td>{{ALCleft.Upload}}</td>
+        <td>{{ALCleft.UptimeSeconds | value: 'hms':'' }}</td>
+        <td>{{ALCleft.Pulses | number: '1.':'nl' }}</td>
+      </tr>
+    </table>
+  </div>
+  <br *ngIf="(ALCleft | json) !== '[]' && !loading && option == 'daily'" />
+
+  <div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource" matSort class="table table-dark table-striped table-bordered">
+      <ng-container matColumnDef="today">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          NR
+        </th>
+        <td mat-cell *matCellDef="let element" placement="top" popoverClass="popwrap" triggers="mouseenter:mouseleave" popoverTitle="Daily rank:" container="body"><!--[ngbPopover]="getnr(element.today | number: '1.':'nl', element.yesterday | number: '1.':'nl')"-->
+          {{ element.today }}
+          <span *ngIf="element.yesterday === null || element.yesterday === ''" class="badge rounded-pill badge-light pull-right small">
+            <svg class="newpulse" xmlns="http://www.w3.org/2000/svg">
+              <rect fill="#EFBB07" stroke="#000000" x="0" y="0" class="rec" />
+              <text x="50%" y="57%" dominant-baseline="middle" text-anchor="middle" fill="#000000" font-family="Trebuchet MS" class="new">
+                NEW
+              </text>
+              <text x="50%" y="57%" dominant-baseline="middle" text-anchor="middle" fill="#000000" font-family="Trebuchet MS" class="pulse">
+                PULSE
+              </text>
+            </svg>
+          </span>
+          <span *ngIf="element.yesterday != null" class="badge rounded-pill badge-light pull-right small" [innerHTML]="element.today | value: 'rank':element.yesterday"></span>
+        </td>
+        <td mat-footer-cell *matFooterCellDef>Totals:</td>
+      </ng-container>
+
+      <ng-container matColumnDef="Username">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          Name &nbsp;&nbsp;
+          <div class="small">&nbsp;&nbsp;&nbsp;&nbsp;[Teamname]</div>
+        </th>
+        <td mat-cell *matCellDef="let element" placement="top" popoverClass="popwrap" triggers="mouseenter:mouseleave" popoverTitle="Last pulse:" container="body"><!--[ngbPopover]="element.LastPulse | date: 'hh:mm:ss dd-MM-yyyy'"-->
+          <a data-toggle="modal" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="ClickUser(element.UserID, element.UsernameFull)" [innerHTML]="element.Username | highlightSearch: filterText"></a>
+          <div class="pull-right small">{{ element.Team }}</div>
+        </td>
+        <td mat-footer-cell *matFooterCellDef></td>
+      </ng-container>
+
+      <ng-container matColumnDef="StatsKeys">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          Keys
+        </th>
+        <td mat-cell *matCellDef="let element" placement="top" triggers="mouseenter:mouseleave" popoverTitle="Keys rank:" container="body"><!--popoverClass="popwrap" [ngbPopover]="getnr(element.RankKeysToday | number: '1.':'nl', element.RankKeysYesterday | number: '1.':'nl')"-->
+          {{ element.StatsKeys | number: '1.':'nl' }}
+          <span class="badge rounded-pill badge-light pull-right small" [innerHTML]="element.StatsRankKeys | value: 'display':''"></span>
+        </td>
+        <td mat-footer-cell *matFooterCellDef>
+          {{ TKeys | number: '1.':'nl' }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="StatsClicks">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          Clicks
+        </th>
+        <td mat-cell *matCellDef="let element" placement="top" popoverClass="popwrap" triggers="mouseenter:mouseleave" popoverTitle="Clicks rank:" container="body"><!--[ngbPopover]="getnr(element.RankClicksToday | number: '1.':'nl', element.RankClicksYesterday | number: '1.':'nl')"-->
+          {{ element.StatsClicks | number: '1.':'nl' }}
+          <span class="badge rounded-pill badge-light pull-right small" [innerHTML]="element.StatsRankClicks | value: 'display':''"></span>
+        </td>
+        <td mat-footer-cell *matFooterCellDef>
+          {{ TClicks | number: '1.':'nl' }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="StatsDownloadMB">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          Download
+        </th>
+        <td mat-cell *matCellDef="let element" placement="top" popoverClass="popwrap" triggers="mouseenter:mouseleave" popoverTitle="Download rank:" container="body"><!--[ngbPopover]="getnr(element.RankDownloadToday | number: '1.':'nl', element.RankDownloadYesterday | number: '1.':'nl')"-->
+          {{ element.StatsDownloadMB | value: 'bytes':'' }}
+          <span class="badge rounded-pill badge-light pull-right small" [innerHTML]="element.StatsRankDownload | value: 'display':''"></span>
+        </td>
+        <td mat-footer-cell *matFooterCellDef>
+          {{ TDownload | value: 'bytes':'' }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="StatsUploadMB">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          Upload
+        </th>
+        <td mat-cell *matCellDef="let element" placement="top" popoverClass="popwrap" triggers="mouseenter:mouseleave" popoverTitle="Upload rank:" container="body"><!--[ngbPopover]="getnr(element.RankUploadToday | number: '1.':'nl', element.RankUploadYesterday | number: '1.':'nl')"-->
+          {{ element.StatsUploadMB | value: 'bytes':'' }}
+          <span class="badge rounded-pill badge-light pull-right small" [innerHTML]="element.StatsRankUpload | value: 'display':''"></span>
+        </td>
+        <td mat-footer-cell *matFooterCellDef>
+          {{ TUpload | value: 'bytes':'' }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="StatsUptimeSeconds">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          Uptime
+        </th>
+        <td mat-cell *matCellDef="let element" placement="top" popoverClass="popwrap" triggers="mouseenter:mouseleave" popoverTitle="Uptime rank:" container="body"><!--[ngbPopover]="getnr(element.RankUptimeToday | number: '1.':'nl', element.RankUptimeYesterday | number: '1.':'nl')"-->
+          {{ element.StatsUptimeSeconds | value: 'hms':'' }}
+          <span class="badge rounded-pill badge-light pull-right small" [innerHTML]="element.StatsRankUptime | value: 'display':''"></span>
+        </td>
+        <td mat-footer-cell *matFooterCellDef>
+          {{ TUptime | value: 'hms':'' }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="StatsPulses">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          Pulses
+        </th>
+        <td mat-cell *matCellDef="let element" placement="top" popoverClass="popwrap" triggers="mouseenter:mouseleave" popoverTitle="Total pulses:" container="body"><!--[ngbPopover]="getnr(element.PulsesToday | number: '1.':'nl', element.PulsesYesterday | number: '1.':'nl')"-->
+          {{ element.StatsPulses }}
+        </td>
+        <td mat-footer-cell *matFooterCellDef>
+          {{ TPulses | number: '1.':'nl' }}
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      <tr mat-footer-row *matFooterRowDef="displayedColumns"></tr>
+    </table>
+    <div>
+      <mat-paginator [pageSizeOptions]="[5, 10, 25, 50, 100]" [pageSize]="pageSize" (page)="handlePage()" showFirstLastButtons></mat-paginator>
+    </div>
+  </div>
+
+  <br />
+  <br />
+  <div *ngIf="!loading" class="btn-group">
+    <!--<label class="btn btn-sm btn-outline-primary mr-2" [class.active]="height === 400" (click)="ReloadGraph(400)">400</label>-->
+    <label class="btn btn-sm btn-outline-primary mr-2" [class.active]="height === 600" (click)="ReloadGraph(600)">600</label>
+    <label class="btn btn-sm btn-outline-primary mr-2" [class.active]="height === 800" (click)="ReloadGraph(800)">800</label>
+  </div>
+  <div *ngIf="!loading" class="btn-group">
+    <label class="btn btn-sm btn-outline-primary mr-2" [class.active]="gr === 'line'" (click)="ReloadGraph('line')">Line</label>
+    <label class="btn btn-sm btn-outline-primary mr-2" [class.active]="gr === 'bar'" (click)="ReloadGraph('bar')">Bar</label>
+    <label class="btn btn-sm btn-outline-primary mr-2" [class.active]="gr === 'column'" (click)="ReloadGraph('column')">Column</label>
+  </div>
+  <div>
+    <div *ngIf="!loading" class="col-xs-1 text-center">
+      <highcharts-chart style="display: block;" [Highcharts]="Highcharts" [options]="chartOptions" [(update)]="updateFlag"></highcharts-chart>
+      <!--<fusioncharts [type]="gr" width="100%" [height]="height" creditLabel="false" dataFormat="JSON" [dataSource]="str"></fusioncharts>-->
+    </div>
+    <br />
+    <div *ngIf="!loading" class="col-xs-1 text-center" [hidden]="option !== 'daily'">
+      <highcharts-chart style="display: block;" [Highcharts]="Highcharts" [options]="chartOptions1" [(update)]="updateFlag"></highcharts-chart>
+      <!--<fusioncharts [type]="gr" width="100%" [height]="height" dataFormat="JSON" [dataSource]="strGraph"></fusioncharts>-->
+    </div>
+  </div>
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">{{ User }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" (click)="ClickCancel()" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <iframe class="embed-responsive-item" [src]="sanitizer.bypassSecurityTrustResourceUrl(UserURL)" scrolling="yes" allowfullscreen></iframe>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="ClickCancel()" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<div class="navbar navbar-expand-lg navbar-dark fixed-bottom bg-primary">
+  <div class="container d-flex">
+    <div class="row justify-content-center align-self-center">
+      &copy; 2022 Grandmasg.nl
+    </div>
+  </div>
+</div>
+<ngx-spinner bdColor = "rgba(0, 0, 0, 0.8)" size = "medium" color = "#fff" type = "pacman" [fullScreen] = "true"><p style="color: white" >Loading {{ this.option }} from sql...</p></ngx-spinner>

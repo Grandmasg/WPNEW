@@ -1,0 +1,14 @@
+{
+    "css.lint.validProperties": [
+        "rx",
+        "ry"
+    ],
+    "scss.lint.validProperties": [
+        "rx",
+        "ry"
+    ],
+    "less.lint.validProperties": [
+        "rx",
+        "ry"
+    ]
+}

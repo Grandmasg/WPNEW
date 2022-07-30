@@ -1,0 +1,109 @@
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-primary">
+  <div class="container-xl">
+    <a class="navbar-brand" [routerLink]="['/daily', '0', '-']">Grandmasg</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarColor01">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="option === 'daily'" (click)="Change('daily')" [routerLink]="['/s/daily', offset, teamname]">Daily</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="option === 'weekly'" (click)="Change('weekly')" [routerLink]="['/s/weekly', offset, teamname]">Weekly</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="option === 'monthly'" (click)="Change('monthly')" [routerLink]="['/s/monthly', offset, teamname]">Monthly</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="option === 'yearly'" (click)="Change('yearly')" [routerLink]="['/s/yearly', offset, teamname]">Yearly</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="option === 'overall'" (click)="Change('overall')" [routerLink]="['/o/overall', offset, teamname]">Overall</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [class.active]="option === 'xml'" (click)="Change('xml')" [routerLink]="['/x/xml', offset, teamname]">Xml</a>
+        </li>
+        <li ngbDropdown class="nav-item dropdown">
+          <a  ngbDropdownToggle class="nav-link dropdown-toggle" href="#" id="team" data-bs-toggle="dropdown" aria-expanded="false">Subteam</a>
+          <ul ngbDropdownMenu class="dropdown-menu scrollable-menu" aria-labelledby="team">
+            <li><a class="dropdown-item" (click)="onSelectTeam('-')" [ngClass]="{ active: '-' == teamname }">-</a></li>
+            <li><a *ngFor="let team of teams" [ngClass]="{ active: team.teamname == teamname }" (click)="onSelectTeam(team.teamname)" on-change="onSelectTeam(team.teamname)" class="dropdown-item"
+              >{{ team.team }} <small>({{ team.aantal }})</small></a
+            ></li>
+          </ul>
+        </li>
+      </ul>
+      <form class="d-flex">
+        <div class="input-group">
+            <span class="input-group-text" id="fake"><i class="fa fa-search fa-lg"></i></span>
+            <input type="text" class="form-control" placeholder="Search" name="search" [ngModel]="filterText" (ngModelChange)="applyFilter($event)">
+        </div>
+      </form>
+    </div>
+  </div>
+</nav>
+
+
+<div class="container-xl content mb-4">
+  <div class="form-group">
+    <div class="input-group date">
+      <form class="form-inline">
+        <div class="form-group">
+          <div class="input-group">
+            <input class="form-control" placeholder="yyyy-MM-dd" name="dp" [(ngModel)]="model" (ngModelChange)="onSelectDate($event)" ngbDatepicker #d="ngbDatepicker">
+            <div class="input-group-append">
+              <button class="btn btn-outline-primary" (click)="d.toggle()" type="button"><i class="fa fa-calendar fa-lg"></i></button>
+            </div>
+          </div>
+        </div>
+      </form>
+      <div>&nbsp;&nbsp;</div>
+      <button class="btn btn-sm btn-outline-primary mr-2" (click)="select('back')" title="Previous day">
+        <i class="fa fa-angle-double-left fa-lg"></i>
+      </button>
+      <div>&nbsp;</div>
+      <button class="btn btn-sm btn-outline-primary mr-2" (click)="select('forward')" title="Next day">
+        <i class="fa fa-angle-double-right fa-lg"></i>
+      </button>
+      <div>&nbsp;</div>
+      <button class="btn btn-sm btn-outline-primary mr-2" [class.active]="+offset === 0" (click)="select('today')">
+        Today
+      </button>
+      <div>&nbsp;</div>
+      <button class="btn btn-sm btn-outline-primary mr-2" [class.active]="+offset === -1" (click)="select('yesterday')">
+        Yesterday
+      </button>
+    </div>
+    <br />
+    <div *ngIf="!loading" class="col-xs-1 text-center" [hidden]="teamname == '-'">
+      <h1>{{ teamname }}</h1>
+    </div>
+    <div class="jumbotron">
+      <h3>{{ this.option | titlecase }} {{ date | date: 'dd-MM-yyyy' }}</h3>
+    </div>
+  </div>
+  <br />
+  <div>
+    <button class="btn btn-sm btn-outline-primary mr-2" ngxClipboard [cbContent]="xml | unescape" (click)="this.click()">Copy</button>
+    <div class="d-inline small ms-2" [@CopyVisible]="currentState">{{ copy }}</div>
+  </div>
+  <textarea ng-show="!loading" class="form-control" style="width:100%;height:800px;font-size:9px;" onclick="this.focus();this.select()" rows="3" id="xml" name="xml" ng-model="list" [innerHtml]="xml"></textarea>
+</div>
+
+
+
+
+
+
+
+
+<div class="navbar navbar-expand-lg navbar-dark fixed-bottom bg-primary">
+  <div class="container d-flex">
+    <div class="row justify-content-center align-self-center">
+      &copy; 2022 Grandmasg.nl
+    </div>
+  </div>
+</div>
+<ngx-spinner bdColor = "rgba(0, 0, 0, 0.8)" size = "medium" color = "#fff" type = "pacman" [fullScreen] = "true"><p style="color: white" >Loading {{ this.option }} from sql...</p></ngx-spinner>
