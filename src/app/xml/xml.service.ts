@@ -34,7 +34,7 @@ export class XmlService {
 
   getXml(): Observable<any> {
     return this.http
-      .get(this.baseUrl + '/' + this.get + '1', {
+      .get(this.baseUrl + '/' + this.get, {
         headers: this.headers,
         params: {
           get: this.get,
