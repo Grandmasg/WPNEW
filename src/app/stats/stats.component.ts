@@ -1,5 +1,5 @@
 import { environment } from '../../environments/environment';
-import { Component, HostBinding, OnInit, ViewChild } from '@angular/core';
+import { Component, HostBinding, OnInit, ViewChild, Injectable } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { FormGroup, FormControl } from '@angular/forms';
@@ -16,10 +16,11 @@ declare var require: any;
 import { Stats, Team, ALC } from '../stats/stats';
 import { StatsService } from '../stats/stats.service';
 
+
 @Component({
   selector: 'app-stats',
   templateUrl: './stats.component.html',
-  styleUrls: ['./stats.component.scss']
+  styleUrls: ['./stats.component.scss'],
 })
 export class StatsComponent implements OnInit {
   Highcharts: typeof Highcharts = Highcharts;
@@ -84,6 +85,9 @@ export class StatsComponent implements OnInit {
   Keys1: any;
   Clicks1: any;
   stringob: any;
+  from: any;
+  to: any;
+  model2: string;
   chartOptions: Options = {
     chart: {
       renderTo: 'container',
@@ -170,7 +174,7 @@ export class StatsComponent implements OnInit {
     private router: Router,
     public sanitizer: DomSanitizer,
     private spinner: NgxSpinnerService,
-    private titleService: Title,
+    private titleService: Title
   ) { }
 
   model = {
@@ -332,7 +336,11 @@ export class StatsComponent implements OnInit {
         this.dataSource.sort = this.sort;
         this.stats = this.dataSource.filteredData;
         if (this.option === 'daily') {
-          this.dataG = data[`dataG`];
+          this.dataG = data.dataG;
+        }
+        if (this.option !== 'daily') {
+          this.from = data.from;
+          this.to = data.to;
         }
 
         this.Sum();

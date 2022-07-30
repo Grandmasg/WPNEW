@@ -53,6 +53,7 @@ export class XmlComponent implements OnInit {
   currentState = false;
   Changeloading: any;
   error: string = "";
+  dp: any;
 
   constructor(
     private xmlService: XmlService,

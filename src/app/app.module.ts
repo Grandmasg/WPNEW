@@ -12,9 +12,8 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatInputModule } from '@angular/material/input';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
-import { NgbModule, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
-import { NgbDateNLParserFormatter } from './ngb-date-nl-parser-formatter';
+import { MatNativeDateModule } from '@angular/material/core';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HighlightSearchPipe } from './highlightable-search.pipe';
 import { ClipboardModule } from 'ngx-clipboard';
 import { ValuePipe } from './value.pipe';
@@ -32,6 +31,9 @@ import { registerLocaleData } from '@angular/common';
 import localeNl from '@angular/common/locales/nl';
 registerLocaleData(localeNl, 'nl');
 
+import { NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateNLParserFormatter } from './ngb-date-nl-parser-formatter';
+
 import { HighchartsChartModule } from 'highcharts-angular';
 @NgModule({
   declarations: [
@@ -48,10 +50,10 @@ import { HighchartsChartModule } from 'highcharts-angular';
     BrowserAnimationsModule,
     AppRoutingModule,
     HttpClientModule,
-    NgbModule,
     ClipboardModule,
     NgxSpinnerModule,
     FontAwesomeModule,
+    NgbModule,
     FormsModule,
     MatCardModule,
     MatFormFieldModule,
@@ -65,9 +67,8 @@ import { HighchartsChartModule } from 'highcharts-angular';
     HighchartsChartModule
   ],
   providers:  [
-                { provide: NgbDateParserFormatter, useClass: NgbDateNLParserFormatter },
-                HighlightSearchPipe
-              ],
+    {provide: NgbDateParserFormatter, useClass: NgbDateNLParserFormatter},
+    HighlightSearchPipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -21,33 +21,21 @@ function toInteger(value: any): number {
 export class NgbDateNLParserFormatter extends NgbDateParserFormatter {
   parse(value: string): NgbDateStruct {
     if (value) {
-      const dateParts = value.trim().split('/');
+      const dateParts = value.trim().split('-');
       if (dateParts.length === 1 && isNumber(dateParts[0])) {
-        return { year: toInteger(dateParts[0]), month: 0, day: 0 };
+        return {day: toInteger(dateParts[0]), month: null, year: null};
       } else if (dateParts.length === 2 && isNumber(dateParts[0]) && isNumber(dateParts[1])) {
-        return {
-          year: toInteger(dateParts[1]),
-          month: toInteger(dateParts[0]),
-          day: 0
-        };
+        return {day: toInteger(dateParts[0]), month: toInteger(dateParts[1]), year: null};
       } else if (dateParts.length === 3 && isNumber(dateParts[0]) && isNumber(dateParts[1]) && isNumber(dateParts[2])) {
-        return {
-          year: toInteger(dateParts[2]),
-          month: toInteger(dateParts[1]),
-          day: toInteger(dateParts[0])
-        };
+        return {day: toInteger(dateParts[0]), month: toInteger(dateParts[1]), year: toInteger(dateParts[2])};
       }
     }
-    return <any>null;
+    return null;
   }
 
   format(date: NgbDateStruct): string {
-    let stringDate: any = '';
-    if (date) {
-      stringDate += isNumber(date.day) ? padNumber(date.day) + '-' : '';
-      stringDate += isNumber(date.month) ? padNumber(date.month) + '-' : '';
-      stringDate += date.year;
-    }
-    return stringDate;
+    return date ?
+        `${isNumber(date.day) ? padNumber(date.day) : ''}-${isNumber(date.month) ? padNumber(date.month) : ''}-${date.year}` :
+        '';
   }
 }

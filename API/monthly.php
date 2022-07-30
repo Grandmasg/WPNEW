@@ -16,15 +16,13 @@ if (isset($_GET['Offset']) && !empty($_GET["Offset"])) {
 } else {
 	$Offset = 0;
 }
-$dagcur = date("Ymd");
 
-$dag = date("Ymt", mktime(0, 0, 0, date("m"), date("d") + $Offset, date("Y")));
-$dag1 = date("Ymt", mktime(0, 0, 0, date("m") - 1, date("d") + $Offset, date("Y")));
-$dag2 = date("Ymt", mktime(0, 0, 0, date("m") - 2, date("d") + $Offset, date("Y")));
+$dag = date("Ymd", mktime(0, 0, 0, date("m"), date("d") + $Offset, date("Y")));
+$dag1 = date("Ymd", mktime(0, 0, 0, date("m") - 1, date("d") + $Offset, date("Y")));
+$dag2 = date("Ymd", mktime(0, 0, 0, date("m") - 2, date("d") + $Offset, date("Y")));
 
-if ($dag > $dagcur) {
-	$dag = $dagcur;
-}
+$from = date("d-m-Y", strtotime($dag1));
+$to = date("d-m-Y", strtotime($dag));
 
 $query = "
 SELECT s1.UserID, ifnull(s1.Keys1,0) - ifnull(s2.Keys1,0) AS StatsKeys, ifnull(s1.Clicks,0) - ifnull(s2.Clicks,0) AS StatsClicks
@@ -109,7 +107,7 @@ if ($result->num_rows > 0) {
 }
 
 // JSON-encode the response
-$json_response = json_encode(['data'=>$daily], JSON_NUMERIC_CHECK);
+$json_response = json_encode(['from'=>$from, 'to'=>$to, 'data'=>$daily], JSON_NUMERIC_CHECK);
 
 // # Return the response
 echo $json_response;

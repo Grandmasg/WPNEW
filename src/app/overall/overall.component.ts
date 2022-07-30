@@ -8,6 +8,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { Title } from '@angular/platform-browser';
 import { DomSanitizer } from '@angular/platform-browser';
+import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import * as Highcharts from 'highcharts';
 import { Options } from 'highcharts';
 require('highcharts/themes/dark-unica')(Highcharts);
@@ -80,6 +81,7 @@ export class OverallComponent implements OnInit {
   Keys1: any;
   Clicks1: any;
   stringob: any;
+  dp: any;
   chartOptions: Options = {
     chart: {
       renderTo: 'container',
@@ -125,6 +127,7 @@ export class OverallComponent implements OnInit {
 
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort!: MatSort;
+  @ViewChild('NgbdDatepicker') d: NgbDateStruct;
 
   constructor(
     private overallService: OverallService,

@@ -52,9 +52,9 @@
       <form class="form-inline">
         <div class="form-group">
           <div class="input-group">
-            <input class="form-control" placeholder="yyyy-MM-dd" name="dp" [(ngModel)]="model" (ngModelChange)="onSelectDate($event)" ngbDatepicker #d="ngbDatepicker">
+            <input class="form-control" placeholder="yyyy-MM-dd" name="dp" [(ngModel)]="model" (ngModelChange)="onSelectDate($event)" ngbDatepicker>
             <div class="input-group-append">
-              <button class="btn btn-outline-primary" (click)="d.toggle()" type="button"><i class="fa fa-calendar fa-lg"></i></button>
+              <button class="btn btn-outline-primary" (click)="dp.toggle()" type="button"><i class="fa fa-calendar fa-lg"></i></button>
             </div>
           </div>
         </div>

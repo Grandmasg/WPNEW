@@ -51,13 +51,14 @@
       <form class="form-inline">
         <div class="form-group">
           <div class="input-group">
-            <input class="form-control" placeholder="yyyy-MM-dd" name="dp" [(ngModel)]="model" (ngModelChange)="onSelectDate($event)" ngbDatepicker #d="ngbDatepicker">
+            <input class="form-control" placeholder="dd-mm-yyyy" name="dp" [(ngModel)]="model" (ngModelChange)="onSelectDate($event)" ngbDatepicker #d="ngbDatepicker">
             <div class="input-group-append">
               <button class="btn btn-outline-primary" (click)="d.toggle()" type="button"><i class="fa fa-calendar fa-lg"></i></button>
             </div>
           </div>
         </div>
       </form>
+
       <div>&nbsp;&nbsp;</div>
       <button class="btn btn-sm btn-outline-primary mr-2" (click)="select('back')" title="Previous day">
         <i class="fa fa-angle-double-left fa-lg"></i>
@@ -79,12 +80,13 @@
     <div *ngIf="!loading" class="col-xs-1 text-center" [hidden]="teamname == '-'">
       <h1>{{ teamname }}</h1>
     </div>
+
     <div class="jumbotron">
       <h3>{{ this.option | titlecase }} {{ date | date: 'dd-MM-yyyy' }}</h3>
+      <p [hidden]="from == null">{{from }} t/m {{to}}</p>
     </div>
   </div>
   <br />
-
   <div *ngIf="(ALCchanged | json) !== '[]' && !loading && option == 'daily'" class="mat-elevation-z8">
     Name changes:
     <table>

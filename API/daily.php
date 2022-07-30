@@ -25,8 +25,6 @@ $dag = date("Ymd", mktime(0, 0, 0, date("m"), date("d") + $Offset, date("Y")));
 $dag1 = date("Ymd", mktime(0, 0, 0, date("m"), date("d") + $Offset - 1, date("Y")));
 $dag2 = date("Ymd", mktime(0, 0, 0, date("m"), date("d") + $Offset - 2, date("Y")));
 
-// echo "datum: ".$dag."<br>";
-
 $query = "
 SELECT s1.UserID, ifnull(s1.Keys1,0) - ifnull(s2.Keys1,0) AS StatsKeys, ifnull(s1.Clicks,0) - ifnull(s2.Clicks,0) AS StatsClicks
 FROM whatpulse_aapdata AS s1, whatpulse_aapdata AS s2

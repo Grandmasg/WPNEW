@@ -17,15 +17,9 @@ if (isset($_GET['Offset']) && !empty($_GET["Offset"])) {
 	$Offset = 0;
 }
 
-$dagcur = date("Ymd", mktime(0, 0, 0, date("m"), date("d"), date("Y")));
 $dag = date("Ymd", mktime(0, 0, 0, date("m"), date("d") + $Offset, date("Y")));
 $dag1 = date("Ymd", mktime(0, 0, 0, date("m"), date("d") + $Offset - 7, date("Y")));
 $dag2 = date("Ymd", mktime(0, 0, 0, date("m"), date("d") + $Offset - 14, date("Y")));
-
-if ($dag > $dagcur) { $dag = $dagcur; }
-$date = new DateTime($dag);
-$week = $date->format("W");
-$year = $date->format("Y");
 
 $query = "
 SELECT s1.UserID, ifnull(s1.Keys1,0) - ifnull(s2.Keys1,0) AS StatsKeys, ifnull(s1.Clicks,0) - ifnull(s2.Clicks,0) AS StatsClicks
@@ -110,8 +104,8 @@ if ($result->num_rows > 0) {
 }
 
 // JSON-encode the response
-$json_response = json_encode(['info'=>$week.'-'.$year, 'data'=>$daily], JSON_NUMERIC_CHECK);
-//if ($Offset >= 0) {} else {file_put_contents('Weeklydata\weekly_'.$week.'-'.$year.'.json',$json_response);};
+$json_response = json_encode(['from'=>$from, 'to'=>$to, 'data'=>$daily], JSON_NUMERIC_CHECK);
+
 // # Return the response
 echo $json_response;
 ?>
