@@ -4,7 +4,7 @@ error_reporting(0);
  * Returns the list of Weekly stats.
  */
 require 'connect.php';
-  
+
 if (isset($_GET['Team']) && !empty($_GET['Team'])) {
 	if ($_GET['Team'] == "-") {$search = "";} else {$search = "[".$_GET['Team']."]";}
 } else {
@@ -20,6 +20,9 @@ if (isset($_GET['Offset']) && !empty($_GET["Offset"])) {
 $dag = date("Ymd", mktime(0, 0, 0, date("m"), date("d") + $Offset, date("Y")));
 $dag1 = date("Ymd", mktime(0, 0, 0, date("m"), date("d") + $Offset - 7, date("Y")));
 $dag2 = date("Ymd", mktime(0, 0, 0, date("m"), date("d") + $Offset - 14, date("Y")));
+
+$from = date("d-m-Y", strtotime($dag1));
+$to = date("d-m-Y", strtotime($dag));
 
 $query = "
 SELECT s1.UserID, ifnull(s1.Keys1,0) - ifnull(s2.Keys1,0) AS StatsKeys, ifnull(s1.Clicks,0) - ifnull(s2.Clicks,0) AS StatsClicks
@@ -41,7 +44,7 @@ if ($result->num_rows > 0) {
 
 $query = "
 SELECT s1.UserID, s1.Username, s1.Username as UsernameFull,
-ifnull(s1.Keys1,0) - ifnull(s2.Keys1,0) AS StatsKeys, 
+ifnull(s1.Keys1,0) - ifnull(s2.Keys1,0) AS StatsKeys,
 ifnull(s1.Clicks,0) - ifnull(s2.Clicks,0) AS StatsClicks,
 ifnull(s1.DownloadMB,0) - ifnull(s2.DownloadMB,0) AS StatsDownloadMB,
 ifnull(s1.UploadMB,0) - ifnull(s2.UploadMB,0) AS StatsUploadMB,
