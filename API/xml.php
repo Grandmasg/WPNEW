@@ -173,48 +173,33 @@ SELECT s1.UserID as UserIDT, s1.Username as UsernameT, s1.Keys1 as Keys1T, s1.Cl
 		$result = $mysqli->query($query) or die($mysqli->error . __LINE__);
 		$i = 1;
 		$arr = array();
-		if ($result->num_rows > 0)
-			{
-			while ($row = $result->fetch_assoc())
-				{
-
-				// if ($row['diffrence_keys'] > 0 || $row['diffrence_clicks'] > 0) {
-
+		if ($result->num_rows > 0) {
+			while ($row = $result->fetch_assoc())	{
 				$letter_position1 = strpos($row['UsernameT'], "[", 0);
 				$letter_position2 = strpos($row['UsernameT'], "]", 0);
-				if (strpos($row['Username'], "[", 0) >= 1)
-					{
+				if (strpos($row['Username'], "[", 0) >= 1) {
 					$row['Username'] = substr($row['UsernameT'], $letter_position1);
 					$letter_position1 = strpos($row['UsernameT'], "[", 0);
 					$letter_position2 = strpos($row['UsernameT'], "]", 0);
-					}
+				}
 
 				$naam = substr($row['Username'], $letter_position1, $letter_position2 + 1);
-				if ($letter_position1 !== false && $letter_position2 !== false)
-					{
-					if ($letter_position1 > 0)
-						{
+				if ($letter_position1 !== false && $letter_position2 !== false)	{
+					if ($letter_position1 > 0) {
 						$naam = substr($row['UsernameT'], $letter_position1);
-						}
-
+					}
 					$row['UsernameT'] = str_replace($naam, "", $row['UsernameT']);
 					$row['Team'] = $naam;
 					$row['UsernameT'] = trim($row['UsernameT']);
-					}
-				  else
-					{
+				} else {
 					$row['UsernameT'] = trim($row['UsernameT']);
-					}
-
+				}
 				$row['today'] = $i;
 				$row['yesterday'] = $dailyflushgister[$row['UserID']];
 				$arr[] = $row;
-
-				// }
-
 				$i++;
-				}
 			}
+		}
 
 		$query = "
 SELECT Username
@@ -224,16 +209,14 @@ WHERE datum = '$dag' AND Username LIKE '%" . $search . "%'
 		$result = $mysqli->query($query) or die($mysqli->error . __LINE__);
 		$aantalA = 0;
 		$arrayA = array();
-		if ($result->num_rows > 0)
-			{
-			while ($row = $result->fetch_assoc())
-				{
+		if ($result->num_rows > 0) {
+			while ($row = $result->fetch_assoc()) {
 				array_push($arrayA, array(
 					"Username" => $row['Username']
 				));
 				$aantalA++;
-				}
 			}
+		}
 
 		$query = "
 SELECT Username
@@ -243,41 +226,35 @@ WHERE datum = '$dag1' AND Username LIKE '%" . $search . "%'
 		$result = $mysqli->query($query) or die($mysqli->error . __LINE__);
 		$aantalB = 0;
 		$arrayB = array();
-		if ($result->num_rows > 0)
-			{
-			while ($row = $result->fetch_assoc())
-				{
+		if ($result->num_rows > 0) {
+			while ($row = $result->fetch_assoc()) {
 				array_push($arrayB, array(
 					"Username" => $row['Username']
 				));
 				$aantalB++;
-				}
 			}
+		}
 
-		foreach($arrayA as $num => $values)
-			{
+		foreach($arrayA as $num => $values) {
 			$Usernamea[] = $values['Username'];
-			}
+		}
 
-		foreach($arrayB as $num => $values)
-			{
+		foreach($arrayB as $num => $values)	{
 			$Usernameb[] = $values['Username'];
-			}
+		}
 
 		$resultadded = array_diff($Usernamea, $Usernameb);
 		$countadded = count($resultadded);
 		$counttoday = count($arrayA);
 
 		$i = 0;
-		foreach($resultadded as $x => $x_value)
-			{
+		foreach($resultadded as $x => $x_value)	{
 			$added.= "[green]" . $x_value . "[/]";
-			while ($i < $countadded - 1)
-				{
+			while ($i < $countadded - 1) {
 				$added.= ",";
 				$i++;
-				}
 			}
+		}
 
 		$resultleft = array_diff($Usernameb, $Usernamea);
 		$countleft = - 1 * count($resultleft);
@@ -291,28 +268,26 @@ WHERE datum = '$dag1' AND Username LIKE '%" . $search . "%'
 			}
 		}
 
-		if ($countadded == 0 && $countleft == 0)
-			{
+		if ($countadded == 0 && $countleft == 0) {
 			$xmladdleft = addColorDots(0);
 			$xmluaddleft = "";
-			}
-		elseif ($countadded > 0 && $countleft < 0)
-			{
+		}
+		elseif ($countadded > 0 && $countleft < 0) {
 			$xmladdleft = addColorDots($countadded) . addColorDots($countleft);
 			$xmluaddleft = "[tr][th][green]Added[/]/[red]Left[/][/][td]" . $added . "," . $left . "[/][/]";
-			}
-		elseif ($countadded > 0)
-			{
+		}
+		elseif ($countadded > 0) {
 			$xmladdleft = addColorDots($countadded);
 			$xmluaddleft = "[tr][th][green]Added[/][/][td]" . $added . "[/][/]";
-			}
-		elseif ($countleft < 0)
-			{
+		}
+		elseif ($countleft < 0) {
 			$xmladdleft = addColorDots($countleft);
 			$xmluaddleft = "[tr][th][red]Left[/][/][td]" . $left . "[/][/]";
-			}
+		}
 
-		// echo $xmladdleft;
+    //
+    // Users added/left
+    //
 
 		$query = "
 SELECT s1.Team, sum(s1.Keys1) as Keys1T, sum(s1.Clicks) as ClicksT, sum(s1.DownloadMB) as DownloadMBT, sum(s1.UploadMB) as UploadMBT, sum(s1.UptimeSeconds) as UptimeSecondsT,
@@ -331,21 +306,17 @@ SELECT s1.Team, sum(s1.Keys1) as Keys1T, sum(s1.Clicks) as ClicksT, sum(s1.Downl
 		$result = $mysqli->query($query) or die($mysqli->error . __LINE__);
 		$teamC = 0;
 		$Tarr = array();
-		if ($result->num_rows > 0)
-			{
-			while ($row = $result->fetch_assoc())
-				{
+		if ($result->num_rows > 0) {
+			while ($row = $result->fetch_assoc())	{
 				array_push($Tarr, array(
 					$row
 				));
 				$teamC++;
-				}
 			}
+		}
 
 		$teamC--;
 		$teamC--;
-
-		// print_r($Tarr);
 
 		$aantal = 0;
 		foreach($arr as $num => $values)
@@ -365,7 +336,9 @@ SELECT s1.Team, sum(s1.Keys1) as Keys1T, sum(s1.Clicks) as ClicksT, sum(s1.Downl
 			$diffrence_Pulses+= $values['diffrence_Pulses'];
 			}
 
+    //
 		// XML daily
+    //
 
 		$xml = "[nosmilies][table border=1 width=800 fontsize=11 bgcolor=#FFFFFF]
 [tr][th bgcolor=#262A34 colspan=2][img=800,72]https://tweakers.net/ext/f/2dheVPycgBjdThsg19BVPDJY/full.png[/img][/][/]
@@ -379,7 +352,9 @@ SELECT s1.Team, sum(s1.Keys1) as Keys1T, sum(s1.Clicks) as ClicksT, sum(s1.Downl
 [tr][th]Members[/][td]" . addDots($counttoday, '') . " " . $xmladdleft . "[/][/]" . $xmluaddleft . "
 ";
 
+    //
 		// Team
+    //
 
 		$xml.= "[/][table border=1 width=800 fontsize=11 bgcolor=#FFFFFF]
 [tr][th bgcolor=#262A34 colspan=7][img=800,72]https://tweakers.net/ext/f/xo3qIkY9VqGx9Hvj3efounk9/full.png[/img][/][/]
@@ -398,31 +373,30 @@ SELECT s1.Team, sum(s1.Keys1) as Keys1T, sum(s1.Clicks) as ClicksT, sum(s1.Downl
 
 		$xml.= "[tr][td bgcolor=#FFFFFF fontsize=11 colspan=8]Totaal zijn er [b]" . $teamC . " subteams[/] geregistreerd![/][/]\n";
 
+    //
 		// Keys top 25
+    //
 
 		$xml.= "[/][table border=1 width=800 fontsize=11 bgcolor=#FFFFFF]
 [tr][th bgcolor=#262A34 colspan=5][img=800,72]https://tweakers.net/ext/f/BLR5hXaNXPqpMa4lHvn1IOql/full.png[/img][/][/]
 [tr][th]#[/][th]Rank[/][th]User[/][th]Keys[/][th]Clicks[/][/]
 ";
-		for ($i = 0; $i < 25; $i++)
-			{
+		for ($i = 0; $i < 25; $i++)	{
 			$j = $i + 1;
 			$xml.= "[tr][td][i]" . $j . "[/][/][td]" . addDots($arr[$i]['Rank_Keys_today'],'') . " " . addColorDotsRank($arr[$i]['diffrence_Rank_Keys']) . "[/][td]" . $arr[$i]['UsernameT'] . "[/][td][blue]" . addDots($arr[$i]['Keys1T'],'') . "[/] " . addColorDots($arr[$i]['diffrence_keys']) . "[/]" . "[td]" . addDots($arr[$i]['ClicksT'],'') . " " . addColorDots($arr[$i]['diffrence_clicks']) . "[/][/]\n";
-			}
+		}
 
+    //
 		// Keys
+    //
 
-		function keySort($item1, $item2)
-			{
-			if ($item1['diffrence_keys'] == $item2['diffrence_keys'])
-				{
+		function keySort($item1, $item2) {
+			if ($item1['diffrence_keys'] == $item2['diffrence_keys'])	{
 				return $item1['diffrence_clicks'] < $item2['diffrence_clicks'] ? 1 : -1;
-				}
-			  else
-				{
+			} else {
 				return ($item1['diffrence_keys'] < $item2['diffrence_keys']) ? 1 : -1;
-				}
 			}
+		}
 
 		usort($arr, 'keySort');
 		$xml.= "[/][table border=1 width=800 fontsize=11 bgcolor=#FFFFFF]
@@ -435,95 +409,97 @@ SELECT s1.Team, sum(s1.Keys1) as Keys1T, sum(s1.Clicks) as ClicksT, sum(s1.Downl
 			$xml.= "[tr][td][i]" . $j . "[/][/][td]" . addDots($arr[$i]['Rank_Keys_today'], '') . " " . addColorDotsRank($arr[$i]['diffrence_Rank_Keys']) . "[/][td]" . $arr[$i]['UsernameT'] . "[/][td][blue]" . addDots($arr[$i]['Keys1T'], '') . "[/] " . addColorDots($arr[$i]['diffrence_keys']) . "[/]" . "[td]" . addDots($arr[$i]['ClicksT'], '') . " " . addColorDots($arr[$i]['diffrence_clicks']) . "[/][/]\n";
 			}
 
+    //
 		// Clicks
+    //
 
-		function clickSort($item1, $item2)
-			{
-			if ($item1['diffrence_clicks'] == $item2['diffrence_clicks'])
-				{
+		function clickSort($item1, $item2) {
+			if ($item1['diffrence_clicks'] == $item2['diffrence_clicks']) {
 				return $item1['diffrence_keys'] < $item2['diffrence_keys'] ? 1 : -1;
-				}
-			  else
-				{
+			} else {
 				return ($item1['diffrence_clicks'] < $item2['diffrence_clicks']) ? 1 : -1;
-				}
 			}
+		}
 
 		usort($arr, 'clickSort');
 		$xml.= "[/][table border=1 width=800 fontsize=11 bgcolor=#FFFFFF]
 [tr][th bgcolor=#262A34 colspan=5][img=800,72]https://tweakers.net/ext/f/3BrlOKCFUqQwCuBVLO9AmSic/full.png[/img][/][/]
 [tr][th]#[/][th]Rank[/][th]User[/][th]Keys[/][th]Clicks[/][/]
 ";
-		for ($i = 0; $i < 20; $i++)
-			{
+		for ($i = 0; $i < 20; $i++) {
 			$j = $i + 1;
 			$xml.= "[tr][td][i]" . $j . "[/][/][td]" . addDots($arr[$i]['Rank_Clicks_today'], '') . " " . addColorDotsRank($arr[$i]['diffrence_Rank_Clicks']) . "[/][td]" . $arr[$i]['UsernameT'] . "[/][td]" . addDots($arr[$i]['Keys1T'], '') . " " . addColorDots($arr[$i]['diffrence_keys']) . "[/]" . "[td][blue]" . addDots($arr[$i]['ClicksT'], '') . "[/] " . addColorDots($arr[$i]['diffrence_clicks']) . "[/][/]\n";
-			}
+		}
 
+    //
 		// Download
+    //
 
-		function downloadSort($item1, $item2)
-			{
+		function downloadSort($item1, $item2) {
 			if ($item1['diffrence_DownloadMB'] == $item2['diffrence_DownloadMB']) return 0;
 			return ($item1['diffrence_DownloadMB'] < $item2['diffrence_DownloadMB']) ? 1 : -1;
-			}
+		}
 
 		usort($arr, 'downloadSort');
 		$xml.= "[/][table border=1 width=800 fontsize=11 bgcolor=#FFFFFF]
 [tr][th bgcolor=#262A34 colspan=6][img=800,72]https://tweakers.net/ext/f/4jVO47sgl0hgwuOABzijosU3/full.png[/img][/][/]
 [tr][th]#[/][th]Rank[/][th]User[/][th]Download[/][th]Upload[/][th]Uptime[/][/]
 ";
-		for ($i = 0; $i < 20; $i++)
-			{
+		for ($i = 0; $i < 20; $i++) {
 			$j = $i + 1;
 			$xml.= "[tr][td][i]" . $j . "[/][/][td]" . addDots($arr[$i]['Rank_Download_today'], '') . " " . addColorDotsRank($arr[$i]['diffrence_Rank_Download']) . "[/][td]" . $arr[$i]['UsernameT'] . "[/][td][blue]" . addDotsGB($arr[$i]['DownloadMBT']) . "[/] " . addColorDots($arr[$i]['diffrence_DownloadMB'], 'MB') . "[/][td]" . addDotsGB($arr[$i]['UploadMBT']) . " " . addColorDots($arr[$i]['diffrence_UploadMB'], 'MB') . "[/][td]" . addDotssec($arr[$i]['UptimeSecondsT'], 'uur') . " " . addColorDots($arr[$i]['diffrence_UptimeSeconds'], 'sec') . "[/][/]\n";
-			}
+		}
 
+    //
 		// Upload
+    //
 
-		function uploadSort($item1, $item2)
-			{
+		function uploadSort($item1, $item2) {
 			if ($item1['diffrence_UploadMB'] == $item2['diffrence_UploadMB']) return 0;
 			return ($item1['diffrence_UploadMB'] < $item2['diffrence_UploadMB']) ? 1 : -1;
-			}
+		}
 
 		usort($arr, 'uploadSort');
 		$xml.= "[/][table border=1 width=800 fontsize=11 bgcolor=#FFFFFF]
 [tr][th bgcolor=#262A34 colspan=6][img=800,72]https://tweakers.net/ext/f/x7OTy2nxMhfLT6rHef6NeIyW/full.png[/img][/][/]
 [tr][th]#[/][th]Rank[/][th]User[/][th]Download[/][th]Upload[/][th]Uptime[/][/]
 ";
-		for ($i = 0; $i < 20; $i++)
-			{
+		for ($i = 0; $i < 20; $i++) {
 			$j = $i + 1;
 			$xml.= "[tr][td][i]" . $j . "[/][/][td]" . addDots($arr[$i]['Rank_Upload_today'], '') . " " . addColorDotsRank($arr[$i]['diffrence_Rank_Upload']) . "[/][td]" . $arr[$i]['UsernameT'] . "[/][td]" . addDotsGB($arr[$i]['DownloadMBT']) . " " . addColorDots($arr[$i]['diffrence_DownloadMB'], 'MB') . "[/][td][blue]" . addDotsGB($arr[$i]['UploadMBT']) . "[/] " . addColorDots($arr[$i]['diffrence_UploadMB'], 'MB') . "[/][td]" . addDotssec($arr[$i]['UptimeSecondsT'], 'uur') . " " . addColorDots($arr[$i]['diffrence_UptimeSeconds'], 'sec') . "[/][/]\n";
-			}
+		}
 
+    //
 		// Uptime
+    //
 
-		function uptimeSort($item1, $item2)
-			{
+		function uptimeSort($item1, $item2)	{
 			if ($item1['diffrence_UptimeSeconds'] == $item2['diffrence_UptimeSeconds']) return 0;
 			return ($item1['diffrence_UptimeSeconds'] < $item2['diffrence_UptimeSeconds']) ? 1 : -1;
-			}
+		}
 
 		usort($arr, 'uptimeSort');
 		$xml.= "[/][table border=1 width=800 fontsize=11 bgcolor=#FFFFFF]
 [tr][th bgcolor=#262A34 colspan=6][img=800,72]https://tweakers.net/ext/f/bBsyrm1mfPdmVhvmArF4frHe/full.png[/img][/][/]
 [tr][th]#[/][th]Rank[/][th]User[/][th]Download[/][th]Upload[/][th]Uptime[/][/]
 ";
-		for ($i = 0; $i < 20; $i++)
-			{
+		for ($i = 0; $i < 20; $i++)	{
 			$j = $i + 1;
 			$xml.= "[tr][td][i]" . $j . "[/][/][td]" . addDots($arr[$i]['Rank_Upload_today'], '') . " " . addColorDotsRank($arr[$i]['diffrence_Rank_Upload']) . "[/][td]" . $arr[$i]['UsernameT'] . "[/][td]" . addDotsGB($arr[$i]['DownloadMBT']) . " " . addColorDots($arr[$i]['diffrence_DownloadMB'], 'MB') . "[/][td]" . addDotsGB($arr[$i]['UploadMBT']) . " " . addColorDots($arr[$i]['diffrence_UploadMB'], 'MB') . "[/][td][blue]" . addDotssec($arr[$i]['UptimeSecondsT'], 'uur') . "[/] " . addColorDots($arr[$i]['diffrence_UptimeSeconds'], 'sec') . "[/][/]\n";
-			}
+		}
 
+    //
 		// end
+    //
 
 		$xml.= "[/][/]";
     $xml.= "[b][small][br]Stats site= [url=https://www.grandmasg.nl/WPNEW/#/daily/0/-]WhatPulse stats![/][br]Source= [url=https://github.com/Grandmasg/WPNEW]Github team stats[/][/][/]
 		$xml = str_replace("]", "&#093;", $xml);
 		echo $xml;
+
+    //
 		// JSON-encode the response
+    //
 }
 
 ?>
