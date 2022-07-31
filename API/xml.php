@@ -3,7 +3,7 @@ error_reporting(1);
 ini_set('display_errors', 1);
 
 require 'connect.php';
- 
+
 if (isset($_GET['Team']) && !empty($_GET['Team'])) {
 	if ($_GET['Team'] == "-") {
 		$search = "";
@@ -125,7 +125,7 @@ if ($Offset >= 0) {
 	$dag1 = date("Ymd", mktime(0, 0, 0, date("m") , date("d") + $Offset - 1, date("Y")));
 	$dag2 = date("Ymd", mktime(0, 0, 0, date("m") , date("d") + $Offset - 2, date("Y")));
 	$daglang = date("Y-m-d", mktime(0, 0, 0, date("m") , date("d") + $Offset, date("Y")));
-		
+
 	$query = "
 	SELECT s1.UserID, ifnull(s1.Keys1,0) - ifnull(s2.Keys1,0) AS DiffrenceKeys, ifnull(s1.Clicks,0) - ifnull(s2.Clicks,0) AS DiffrenceClicks
 	FROM whatpulse_aapdata AS s1, whatpulse_aapdata AS s2
@@ -143,11 +143,11 @@ if ($Offset >= 0) {
 		$i++;
 		}
 	}
-		
+
 
 		$query = "
 SELECT s1.UserID as UserIDT, s1.Username as UsernameT, s1.Keys1 as Keys1T, s1.Clicks as ClicksT, s1.DownloadMB as DownloadMBT, s1.UploadMB as UploadMBT, s1.UptimeSeconds as UptimeSecondsT,
-    ifnull(s1.Keys1,0) - ifnull(s2.Keys1,0) AS diffrence_keys, 
+    ifnull(s1.Keys1,0) - ifnull(s2.Keys1,0) AS diffrence_keys,
     ifnull(s1.Clicks,0) - ifnull(s2.Clicks,0) AS diffrence_clicks,
     ifnull(s1.DownloadMB,0) - ifnull(s2.DownloadMB,0) AS diffrence_DownloadMB,
     ifnull(s1.UploadMB,0) - ifnull(s2.UploadMB,0) AS diffrence_UploadMB,
@@ -316,7 +316,7 @@ WHERE datum = '$dag1' AND Username LIKE '%" . $search . "%'
 
 		$query = "
 SELECT s1.Team, sum(s1.Keys1) as Keys1T, sum(s1.Clicks) as ClicksT, sum(s1.DownloadMB) as DownloadMBT, sum(s1.UploadMB) as UploadMBT, sum(s1.UptimeSeconds) as UptimeSecondsT,
-    sum(ifnull(s1.Keys1,0) - ifnull(s2.Keys1,0)) AS diffrence_keys, 
+    sum(ifnull(s1.Keys1,0) - ifnull(s2.Keys1,0)) AS diffrence_keys,
     sum(ifnull(s1.Clicks,0) - ifnull(s2.Clicks,0)) AS diffrence_clicks,
     sum(ifnull(s1.DownloadMB,0) - ifnull(s2.DownloadMB,0)) AS diffrence_DownloadMB,
     sum(ifnull(s1.UploadMB,0) - ifnull(s2.UploadMB,0)) AS diffrence_UploadMB,
@@ -520,6 +520,7 @@ SELECT s1.Team, sum(s1.Keys1) as Keys1T, sum(s1.Clicks) as ClicksT, sum(s1.Downl
 		// end
 
 		$xml.= "[/][/]";
+    $xml.= "[br]Stats site=[url=https://www.grandmasg.nl/WPNEW/#/daily/0/-]WhatPulse stats![/][br]Source=[url=https://github.com/Grandmasg/WPNEW]Github team stats[/]";
 		$xml = str_replace("[", "&#091;", $xml);
 		$xml = str_replace("]", "&#093;", $xml);
 		echo $xml;
