@@ -520,8 +520,7 @@ SELECT s1.Team, sum(s1.Keys1) as Keys1T, sum(s1.Clicks) as ClicksT, sum(s1.Downl
 		// end
 
 		$xml.= "[/][/]";
-    $xml.= "[br]Stats site=[url=https://www.grandmasg.nl/WPNEW/#/daily/0/-]WhatPulse stats![/][br]Source=[url=https://github.com/Grandmasg/WPNEW]Github team stats[/]";
-		$xml = str_replace("[", "&#091;", $xml);
+    $xml.= "[b][small][br]Stats site= [url=https://www.grandmasg.nl/WPNEW/#/daily/0/-]WhatPulse stats![/][br]Source= [url=https://github.com/Grandmasg/WPNEW]Github team stats[/][/][/]
 		$xml = str_replace("]", "&#093;", $xml);
 		echo $xml;
 		// JSON-encode the response
