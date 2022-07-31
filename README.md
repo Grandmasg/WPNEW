@@ -12,7 +12,7 @@ Sample Team: http://api.whatpulse.org/team.php?team=1295&members=yes&format=xml
 
 Sample User: http://api.whatpulse.org/user.php?user= Number (<<--looping from the teamstats)
 
-Script runs for ~ 45-55 minutes (some delay in cronfile: sleep(2); between the connections and run it every hour.)
+Script runs for ~ 30-45 minutes and it runs every hour.
 Team 1295 has around 1200 users.
 
 > ### Attention:
