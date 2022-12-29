@@ -164,6 +164,7 @@ export class StatsComponent implements OnInit {
       enabled: false
     }
   };
+  myDefaultAllowList: any = []
 
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort!: MatSort;
@@ -355,6 +356,13 @@ export class StatsComponent implements OnInit {
         this.error = err;
       }
     );
+  }
+
+  getnr(val:any, val1:any) {
+    if (val1 === null) {
+      val1 = '-';
+    }
+    return 'Today: ' + val + '\nYesterday: ' + val1;
   }
 
   Sum() {

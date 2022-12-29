@@ -167,7 +167,7 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           NR
         </th>
-        <td mat-cell *matCellDef="let element" placement="top" popoverClass="popwrap" triggers="mouseenter:mouseleave" popoverTitle="Daily rank:" container="body"><!--[ngbPopover]="getnr(element.today | number: '1.':'nl', element.yesterday | number: '1.':'nl')"-->
+        <td mat-cell *matCellDef="let element" placement="top" data-toggle="popover" triggers="mouseenter:mouseleave" popoverTitle="Daily rank:" [ngbPopover]="getnr(element.today | number: '1.':'nl', element.yesterday | number: '1.':'nl')" container="body">
           {{ element.today }}
           <span *ngIf="element.yesterday === null || element.yesterday === ''" class="badge rounded-pill badge-light pull-right small">
             <svg class="newpulse" xmlns="http://www.w3.org/2000/svg">
@@ -190,7 +190,7 @@
           Name &nbsp;&nbsp;
           <div class="small">&nbsp;&nbsp;&nbsp;&nbsp;[Teamname]</div>
         </th>
-        <td mat-cell *matCellDef="let element" placement="top" popoverClass="popwrap" triggers="mouseenter:mouseleave" popoverTitle="Last pulse:" container="body"><!--[ngbPopover]="element.LastPulse | date: 'hh:mm:ss dd-MM-yyyy'"-->
+        <td mat-cell *matCellDef="let element" placement="top" data-toggle="popover" triggers="mouseenter:mouseleave" popoverTitle="Last pulse:" [ngbPopover]="element.LastPulse | date: 'hh:mm:ss dd-MM-yyyy'" container="body">
           <a data-toggle="modal" data-bs-toggle="modal" data-bs-target="#exampleModal" (click)="ClickUser(element.UserID, element.UsernameFull)" [innerHTML]="element.Username | highlightSearch: filterText"></a>
           <div class="pull-right small">{{ element.Team }}</div>
         </td>
@@ -201,7 +201,7 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           Keys
         </th>
-        <td mat-cell *matCellDef="let element" placement="top" triggers="mouseenter:mouseleave" popoverTitle="Keys rank:" container="body"><!--popoverClass="popwrap" [ngbPopover]="getnr(element.RankKeysToday | number: '1.':'nl', element.RankKeysYesterday | number: '1.':'nl')"-->
+        <td mat-cell *matCellDef="let element" placement="top" data-toggle="popover" triggers="mouseenter:mouseleave" popoverTitle="Keys rank:" [ngbPopover]="getnr(element.RankKeysToday | number: '1.':'nl', element.RankKeysYesterday | number: '1.':'nl')" container="body">
           {{ element.StatsKeys | number: '1.':'nl' }}
           <span class="badge rounded-pill badge-light pull-right small" [innerHTML]="element.StatsRankKeys | value: 'display':''"></span>
         </td>
@@ -214,7 +214,7 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           Clicks
         </th>
-        <td mat-cell *matCellDef="let element" placement="top" popoverClass="popwrap" triggers="mouseenter:mouseleave" popoverTitle="Clicks rank:" container="body"><!--[ngbPopover]="getnr(element.RankClicksToday | number: '1.':'nl', element.RankClicksYesterday | number: '1.':'nl')"-->
+        <td mat-cell *matCellDef="let element" placement="top" data-toggle="popover" triggers="mouseenter:mouseleave" popoverTitle="Clicks rank:" [ngbPopover]="getnr(element.RankClicksToday | number: '1.':'nl', element.RankClicksYesterday | number: '1.':'nl')" container="body">
           {{ element.StatsClicks | number: '1.':'nl' }}
           <span class="badge rounded-pill badge-light pull-right small" [innerHTML]="element.StatsRankClicks | value: 'display':''"></span>
         </td>
@@ -227,7 +227,7 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           Download
         </th>
-        <td mat-cell *matCellDef="let element" placement="top" popoverClass="popwrap" triggers="mouseenter:mouseleave" popoverTitle="Download rank:" container="body"><!--[ngbPopover]="getnr(element.RankDownloadToday | number: '1.':'nl', element.RankDownloadYesterday | number: '1.':'nl')"-->
+        <td mat-cell *matCellDef="let element" placement="top" data-toggle="popover" triggers="mouseenter:mouseleave" popoverTitle="Download rank:" [ngbPopover]="getnr(element.RankDownloadToday | number: '1.':'nl', element.RankDownloadYesterday | number: '1.':'nl')" container="body">
           {{ element.StatsDownloadMB | value: 'bytes':'' }}
           <span class="badge rounded-pill badge-light pull-right small" [innerHTML]="element.StatsRankDownload | value: 'display':''"></span>
         </td>
@@ -240,7 +240,7 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           Upload
         </th>
-        <td mat-cell *matCellDef="let element" placement="top" popoverClass="popwrap" triggers="mouseenter:mouseleave" popoverTitle="Upload rank:" container="body"><!--[ngbPopover]="getnr(element.RankUploadToday | number: '1.':'nl', element.RankUploadYesterday | number: '1.':'nl')"-->
+        <td mat-cell *matCellDef="let element" placement="top" data-toggle="popover" triggers="mouseenter:mouseleave" popoverTitle="Upload rank:" [ngbPopover]="getnr(element.RankUploadToday | number: '1.':'nl', element.RankUploadYesterday | number: '1.':'nl')" container="body">
           {{ element.StatsUploadMB | value: 'bytes':'' }}
           <span class="badge rounded-pill badge-light pull-right small" [innerHTML]="element.StatsRankUpload | value: 'display':''"></span>
         </td>
@@ -253,7 +253,7 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           Uptime
         </th>
-        <td mat-cell *matCellDef="let element" placement="top" popoverClass="popwrap" triggers="mouseenter:mouseleave" popoverTitle="Uptime rank:" container="body"><!--[ngbPopover]="getnr(element.RankUptimeToday | number: '1.':'nl', element.RankUptimeYesterday | number: '1.':'nl')"-->
+        <td mat-cell *matCellDef="let element" placement="top" data-toggle="popover" triggers="mouseenter:mouseleave" popoverTitle="Uptime rank:" [ngbPopover]="getnr(element.RankUptimeToday | number: '1.':'nl', element.RankUptimeYesterday | number: '1.':'nl')" container="body">
           {{ element.StatsUptimeSeconds | value: 'hms':'' }}
           <span class="badge rounded-pill badge-light pull-right small" [innerHTML]="element.StatsRankUptime | value: 'display':''"></span>
         </td>
@@ -266,7 +266,7 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           Pulses
         </th>
-        <td mat-cell *matCellDef="let element" placement="top" popoverClass="popwrap" triggers="mouseenter:mouseleave" popoverTitle="Total pulses:" container="body"><!--[ngbPopover]="getnr(element.PulsesToday | number: '1.':'nl', element.PulsesYesterday | number: '1.':'nl')"-->
+        <td mat-cell *matCellDef="let element" placement="top" data-toggle="popover" triggers="mouseenter:mouseleave" popoverTitle="Total pulses:" [ngbPopover]="getnr(element.PulsesToday | number: '1.':'nl', element.PulsesYesterday | number: '1.':'nl')" container="body">
           {{ element.StatsPulses }}
         </td>
         <td mat-footer-cell *matFooterCellDef>
