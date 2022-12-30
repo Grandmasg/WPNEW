@@ -31,7 +31,7 @@ const config: ExtraOptions = {
   // enableTracing: true,
   scrollPositionRestoration: 'enabled',
   onSameUrlNavigation: 'reload',
-  relativeLinkResolution: 'legacy'
+  //relativeLinkResolution: 'legacy'
 };
 
 @NgModule({

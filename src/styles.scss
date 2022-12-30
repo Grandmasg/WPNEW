@@ -1,9 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
 
 /* Importing Bootstrap SCSS file. */
-@import "~bootswatch/dist/darkly/variables";
-@import '~bootstrap/scss/bootstrap';
-@import "~bootswatch/dist/darkly/bootswatch";
+@import "node_modules/bootswatch/dist/darkly/variables";
+@import 'node_modules/bootstrap/scss/bootstrap';
+@import "node_modules/bootswatch/dist/darkly/bootswatch";
 
 html {
   --scrollbarBG: #222;
@@ -221,57 +221,6 @@ td.data {
   background-color: #2C3034;
 }
 
-td.mat-footer-cell,
-th.mat-header-cell {
-  background-color: #375a7f;
-}
-
-td.mat-cell {
-  vertical-align: middle;
-}
-
-tr.mat-row, tr.mat-footer-row {
-  height: 36px !important;
-}
-
-th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
-  padding: 0 8px 0 12px !important;
-}
-
-tr.mat-footer-row,
-tr.mat-row {
-  @media (min-width: 48em) {
-    height: 24px;
-  }
-  @media (min-width: 62em) {
-    height: 28px;
-  }
-  @media (min-width: 75em) {
-    height: 32px;
-  }
-}
-
-tr.mat-header-row {
-  height: 44px;
-  vertical-align: middle;
-}
-
-tr.mat-header-row {
-  @media (min-width: 48em) {
-    height: 32px;
-  }
-  @media (min-width: 62em) {
-    height: 36px;
-  }
-  @media (min-width: 75em) {
-    height: 40px;
-  }
-}
-
-.table > :not(:first-child) {
-  border-top: 0px;
-}
-
 thead, tbody, tfoot, tr, td, th {
   border: 1px solid #444;
 }
@@ -288,31 +237,29 @@ tr {
   background-color: #303030;
 }
 
-.mat-paginator-container {
-  height: 60px;
+.mdc-data-table__header-row {
+  height: 44px !important;
+  vertical-align: middle;
 }
 
-.mat-paginator {
+td.mat-mdc-footer-cell,
+tr.mat-mdc-header-row {
+  background-color: #375a7f;
+}
+
+.mdc-data-table__row {
+  height: 36px !important;
+}
+
+td.mat-cell {
+  vertical-align: middle;
+}
+
+.mat-mdc-paginator-container {
   border-bottom: 1px solid #444;
   border-left: 1px solid #444;
   border-right: 1px solid #444;
   background-color: #375a7f;
-  font-size: 10px;
-
-  @media (min-width: 48em) {
-    font-size: 11px;
-  }
-
-  @media (min-width: 62em) {
-    font-size: 13px;
-  }
-
-  @media (min-width: 75em) {
-    font-size: 15px;
-  }
-}
-
-.mat-select-value {
   font-size: 10px;
 
   @media (min-width: 48em) {
@@ -572,11 +519,12 @@ p.still {
 
 .popover {
   white-space: pre-line;
+  --bs-popover-border-color: #444;
+  border: 1px solid #444;
 }
 
 .popover-body {
   padding: 8px var(--bs-popover-body-padding-x);
-
 }
 
 /**
