@@ -2,12 +2,16 @@ export class Stats {
   public Username: string = "";
   public Keys1: number = 0;
   public Clicks: number = 0;
+  public Scrolls: number = 0;
+  public DistanceInMiles: number = 0;
   public StatsKeys: number = 0;
   public StatsClicks: number = 0;
   public DownloadMB: number = 0;
   public UploadMB: number = 0;
   public UptimeSeconds: number = 0;
   public Pulses: number = 0;
+  public StatsScrolls: number = 0;
+  public StatsDistance: number = 0;
   public StatsDownloadMB: number = 0;
   public StatsUploadMB: number = 0;
   public StatsUptimeSeconds: number = 0;
@@ -23,4 +27,8 @@ export class Team {
 export class ALC {
   public yesterday: string = "";
   public today: string = "";
+}
+
+export class users {
+  public users: string = "";
 }

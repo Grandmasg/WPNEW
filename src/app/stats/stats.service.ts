@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 
 import { environment } from '../../environments/environment';
 
@@ -21,6 +21,9 @@ export class StatsService {
   error = '';
   date = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
   today = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+
+  url = 'https://jsonplaceholder.typicode.com/users';
+  users: any;
 
   constructor(private http: HttpClient) {}
 
@@ -88,4 +91,16 @@ export class StatsService {
         })
       );
   }
+
+  getData(): Observable<any> {
+    return this.http
+      .get(this.url)
+      .pipe(
+        map((res) => {
+          this.users = res;
+          return this.users;
+        })
+      );
+  }
+
 }

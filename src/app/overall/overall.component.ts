@@ -11,7 +11,9 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import * as Highcharts from 'highcharts';
 import { Options } from 'highcharts';
-require('highcharts/themes/dark-unica')(Highcharts);
+import theme from 'highcharts/themes/dark-unica';
+theme(Highcharts);
+//require('highcharts/themes/dark-unica')(Highcharts);
 declare var require: any;
 
 import { Overall, Team } from '../overall/overall';
@@ -34,7 +36,7 @@ export class OverallComponent implements OnInit {
   teams: Team[] = [];
   error: string = "";
   loading = false;
-  Changeloading: any;
+  //Changeloading: any;
   date = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
   date2: any;
   date3: any;
@@ -47,6 +49,8 @@ export class OverallComponent implements OnInit {
   strGraph: any;
   TKeys: number = 0;
   TClicks: number = 0;
+  TScrolls: number = 0;
+  TDistance: number = 0.000;
   TDownload: number = 0;
   TUpload: number = 0;
   TUptime: number = 0;
@@ -54,7 +58,7 @@ export class OverallComponent implements OnInit {
   length: number = 0;
   User: string = '';
   UserURL: string = '';
-  displayedColumns: string[] = ['today', 'Username', 'Keys1', 'Clicks', 'DownloadMB', 'UploadMB', 'UptimeSeconds', 'Pulses'];
+  displayedColumns: string[] = ['today', 'Username', 'Keys1', 'Clicks', 'Scrolls', 'DistanceInMiles', 'DownloadMB', 'UploadMB', 'UptimeSeconds', 'Pulses'];
   pageSize = 25;
   pageIndex = 0;
   dataG: any;
@@ -107,7 +111,10 @@ export class OverallComponent implements OnInit {
     }, {
       type: 'column',
       name: 'Clicks',
-      data: []
+      data: [],
+      dataLabels: {
+        enabled: true
+      }
     }],
     xAxis: {
       labels: {
@@ -173,6 +180,12 @@ export class OverallComponent implements OnInit {
   Loading() {
     this.spinner.show();
     this.loading = true;
+  }
+
+  Stoploading() {
+    this.spinner.hide();
+    this.loading = false;
+    //this.Changeloading = 'spinneroff';
   }
 
   Change(id: string) {
@@ -287,9 +300,7 @@ export class OverallComponent implements OnInit {
         this.overall = this.dataSource.filteredData;
         this.Sum();
         this.Graph();
-        this.spinner.hide();
-        this.loading = false;
-        this.Changeloading = 'spinneroff';
+        this.Stoploading();
       },
       err => {
         this.error = err;
@@ -302,6 +313,8 @@ export class OverallComponent implements OnInit {
     for (this.i = 0; this.i < this.length; this.i++) {
       this.TKeys = this.overall.reduce((sum, item) => sum + item.Keys1, 0);
       this.TClicks = this.overall.reduce((sum, item) => sum + item.Clicks, 0);
+      this.TScrolls = this.overall.reduce((sum, item) => sum + item.Scrolls, 0);
+      this.TDistance = this.overall.reduce((sum, item) => sum + item.DistanceInMiles, 0);      
       this.TDownload = this.overall.reduce((sum, item) => sum + item.DownloadMB, 0);
       this.TUpload = this.overall.reduce((sum, item) => sum + item.UploadMB, 0);
       this.TUptime = this.overall.reduce((sum, item) => sum + item.UptimeSeconds, 0);

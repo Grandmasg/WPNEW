@@ -33,6 +33,7 @@ $result = $mysqli->query($query) or die($mysqli->error . __LINE__);
 
 if ($result->num_rows > 0) {
 	while ($row = $result->fetch_assoc()) {
+		unset($row['id']);
 		$today[] = $row;
 	}
 }
@@ -45,6 +46,7 @@ $result = $mysqli->query($query) or die($mysqli->error . __LINE__);
 
 if ($result->num_rows > 0) {
 	while ($row = $result->fetch_assoc()) {
+		unset($row['id']);
 		$yesterday[] = $row;
 	}
 }

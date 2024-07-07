@@ -52,9 +52,7 @@
         <div class="form-group">
           <div class="input-group">
             <input class="form-control" placeholder="dd-mm-yyyy" name="dp" [(ngModel)]="model" (ngModelChange)="onSelectDate($event)" ngbDatepicker #d="ngbDatepicker">
-            <div class="input-group-append">
-              <button class="btn btn-outline-primary" (click)="d.toggle()" type="button"><i class="fa fa-calendar fa-lg"></i></button>
-            </div>
+            <button class="btn btn-outline-primary" (click)="d.toggle()" type="button"><i class="fa fa-calendar fa-lg"></i></button>
           </div>
         </div>
       </form>
@@ -167,7 +165,7 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           NR
         </th>
-        <td mat-cell *matCellDef="let element" placement="top" data-toggle="popover" triggers="mouseenter:mouseleave" popoverTitle="Daily rank:" [ngbPopover]="getnr(element.today | number: '1.':'nl', element.yesterday | number: '1.':'nl')" container="body">
+        <td mat-cell *matCellDef="let element" placement="top" data-toggle="popover" triggers="mouseenter:mouseleave" popoverTitle="{{ this.option | titlecase }} rank:" [ngbPopover]="getnr(element.today | number: '1.':'nl', element.yesterday | number: '1.':'nl')" container="body">
           {{ element.today }}
           <span *ngIf="element.yesterday === null || element.yesterday === ''" class="badge rounded-pill badge-light pull-right small">
             <svg class="newpulse" xmlns="http://www.w3.org/2000/svg">
@@ -187,7 +185,7 @@
 
       <ng-container matColumnDef="Username">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
-          Name &nbsp;&nbsp;
+          Name&nbsp;&nbsp;
           <div class="small">&nbsp;&nbsp;&nbsp;&nbsp;[Teamname]</div>
         </th>
         <td mat-cell *matCellDef="let element" placement="top" data-toggle="popover" triggers="mouseenter:mouseleave" popoverTitle="Last pulse:" [ngbPopover]="element.LastPulse | date: 'hh:mm:ss dd-MM-yyyy'" container="body">
@@ -220,6 +218,32 @@
         </td>
         <td mat-footer-cell *matFooterCellDef>
           {{ TClicks | number: '1.':'nl' }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="StatsScrolls">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          Scrolls
+        </th>
+        <td mat-cell *matCellDef="let element" placement="top" data-toggle="popover" triggers="mouseenter:mouseleave" popoverTitle="Scrolls rank:" [ngbPopover]="getnr(element.RankScrollsToday | number: '1.':'nl', element.RankScrollsYesterday | number: '1.':'nl')" container="body">
+          {{ element.StatsScrolls | number: '1.':'nl' }}
+          <span class="badge rounded-pill badge-light pull-right small" [innerHTML]="element.StatsRankScrolls | value: 'display':''"></span>
+        </td>
+        <td mat-footer-cell *matFooterCellDef>
+          {{ TScrolls | number: '1.':'nl' }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="StatsDistance">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          Distance&nbsp;&nbsp;<div class="small">&nbsp;&nbsp;(km)</div>
+        </th>
+        <td mat-cell *matCellDef="let element" placement="top" data-toggle="popover" triggers="mouseenter:mouseleave" popoverTitle="Distance rank:" [ngbPopover]="getnr(element.RankDistanceToday | number: '1.':'nl', element.RankDistanceYesterday | number: '1.':'nl')" container="body">
+          {{ element.StatsDistance | value: 'mi-km':'' }}
+          <span class="badge rounded-pill badge-light pull-right small" [innerHTML]="element.StatsRankDistance | value: 'display':''"></span>
+        </td>
+        <td mat-footer-cell *matFooterCellDef>
+          {{ TDistance | value: 'mi-km':'' }}
         </td>
       </ng-container>
 
@@ -286,7 +310,6 @@
   <br />
   <br />
   <div *ngIf="!loading" class="btn-group">
-    <!--<label class="btn btn-sm btn-outline-primary mr-2" [class.active]="height === 400" (click)="ReloadGraph(400)">400</label>-->
     <label class="btn btn-sm btn-outline-primary mr-2" [class.active]="height === 600" (click)="ReloadGraph(600)">600</label>
     <label class="btn btn-sm btn-outline-primary mr-2" [class.active]="height === 800" (click)="ReloadGraph(800)">800</label>
   </div>
@@ -298,12 +321,10 @@
   <div>
     <div *ngIf="!loading" class="col-xs-1 text-center">
       <highcharts-chart style="display: block;" [Highcharts]="Highcharts" [options]="chartOptions" [(update)]="updateFlag"></highcharts-chart>
-      <!--<fusioncharts [type]="gr" width="100%" [height]="height" creditLabel="false" dataFormat="JSON" [dataSource]="str"></fusioncharts>-->
     </div>
     <br />
-    <div *ngIf="!loading" class="col-xs-1 text-center" [hidden]="option !== 'daily'">
+    <div *ngIf="!Loading" class="col-xs-1 text-center" [hidden]="option !== 'daily'">
       <highcharts-chart style="display: block;" [Highcharts]="Highcharts" [options]="chartOptions1" [(update)]="updateFlag"></highcharts-chart>
-      <!--<fusioncharts [type]="gr" width="100%" [height]="height" dataFormat="JSON" [dataSource]="strGraph"></fusioncharts>-->
     </div>
   </div>
   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -322,12 +343,12 @@
       </div>
     </div>
   </div>
-
+</div>
 
 <div class="navbar navbar-expand-lg navbar-dark fixed-bottom bg-primary">
   <div class="container d-flex">
     <div class="row justify-content-center align-self-center">
-      &copy; 2022 Grandmasg.nl
+      &copy; 2023 Grandmasg.nl
     </div>
   </div>
 </div>

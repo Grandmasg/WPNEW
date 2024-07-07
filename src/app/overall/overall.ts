@@ -2,6 +2,8 @@ export class Overall {
   public Username: string = "";
   public Keys1: number = 0;
   public Clicks: number = 0;
+  public Scrolls: number = 0;
+  public DistanceInMiles: number = 0.000;
   public DownloadMB: number = 0;
   public UploadMB: number = 0;
   public UptimeSeconds: number = 0;

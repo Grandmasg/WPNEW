@@ -4,7 +4,7 @@ Just another team stats site ;)
 
 Not yet completely finished, but useful!
 
-Sample site: http://www.grandmasg.nl/WPNEW"
+Sample site: http://www.grandmasg.nl/WPNEW
 
 Script uses the full xml of the team data and the separate user data to keep them up to date.
 

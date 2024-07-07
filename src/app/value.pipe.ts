@@ -15,6 +15,7 @@ export class ValuePipe implements PipeTransform {
   seconds: any;
   minutes: any;
   hours: any;
+  days: any;
   response: any;
 
   public constructor() {}
@@ -40,6 +41,11 @@ export class ValuePipe implements PipeTransform {
         this.x = this.x / this.TB;
         return this.x.toFixed(2) * this.neg + ' TB';
       }
+    }
+
+    if (para === 'mi-km') {
+      value = Math.round((value * 1.609344)*1000)/1000
+      return value
     }
 
     if (para === 'misdate') {
@@ -76,16 +82,15 @@ export class ValuePipe implements PipeTransform {
     }
 
     if (para === 'hms') {
-      this.minutes = Math.trunc(value / 60);
-      this.hours = 0;
-      this.seconds = value - (this.minutes * 60);
-
-      if (this.minutes >= 60) {
-        this.hours = Math.trunc(this.minutes / 60);
-        this.minutes = this.minutes - (this.hours * 60);
-      }
-
+      this.days = Math.trunc(value / (60 * 60 * 24))
+      this.hours = Math.trunc((value - (this.days * (60 * 60 * 24))) / (60 * 60));
+      this.minutes = Math.trunc((value - (this.days * (60 * 60 * 24)) - (this.hours * (60 * 60))) / 60);
+      this.seconds = value - (this.days * (60 * 60 * 24)) - (this.hours * (60 * 60)) - (this.minutes * 60);
       this.response = '';
+
+      if (this.days > 0) {
+        this.response = this.response + this.days + 'd';
+      }
 
       if (this.hours > 0) {
         this.response = this.response + this.hours + 'h';

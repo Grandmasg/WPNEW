@@ -77,7 +77,7 @@ function addDotsGB($num) {
 	}
 }
 
-function addDots($num, $added) {
+function addDots($num, $added, $num1) {
 	if ($num == "" || $num == "0") {
 		return '-';
 	} else {
@@ -85,20 +85,28 @@ function addDots($num, $added) {
 		if (!$added == '')	{
 			$added = ' ' . $added;
 		}
-		return number_format($num, 0, '.', '.') . $added;
+		return number_format($num, $num1, ',', '.') . $added;
 	}
 }
 
-function addColorDots($num)	{
+function mi_km($num) {
+	if ($num == "" || $num == "0") {
+		return '-';
+	} else {	
+		return round(($num * 1.609344),9);
+	}
+}
+
+function addColorDots($num, $added, $num1)	{
 	if ($num == 0) {
-		$num = "([img=10,8,,,\"still\",,2]https://tweakers.net/g/dpc/stil.gif[/img])";
+		$num = " ([img=10,8,,,\"still\",,2]https://tweakers.net/g/dpc/stil.gif[/img])";
 	} else {
 		if ($num > 0) {
-			$num = "[green] (+" . addDots($num, '') . ") " . $added . "[/]";
+			$num = "[green] (+" . addDots($num, '', $num1) . ") " . $added . "[/]";
 		}
 
 		if ($num < 0) {
-			$num = "[red] (" . addDots($num, '') . ") " . $added . "[/]";
+			$num = "[red] (" . addDots($num, '', $num1) . ") " . $added . "[/]";
 		}
 	}
 	return $num;
@@ -106,13 +114,13 @@ function addColorDots($num)	{
 
 function addColorDotsRank($num)	{
 	if ($num == 0) {
-		$num = "([img=10,8,,,\"still\",,2]https://tweakers.net/g/dpc/stil.gif[/img])";
+		$num = " ([img=10,8,,,\"still\",,2]https://tweakers.net/g/dpc/stil.gif[/img])";
 	} else {
 		if ($num > 0) {
-			$num = "[green] ([img=10,8,,,\"up\",,2]https://tweakers.net/g/dpc/up.gif[/img]" . addDots($num, '') . ")[/]";
+			$num = "[green] ([img=10,8,,,\"up\",,2]https://tweakers.net/g/dpc/up.gif[/img]" . addDots($num, '', 0) . ")[/]";
 		}
 		if ($num < 0) {
-			$num = "[red] ([img=10,8,,,\"down\",,2]https://tweakers.net/g/dpc/down.gif[/img]" . addDots($num*-1, '') . ")[/]";
+			$num = "[red] ([img=10,8,,,\"down\",,2]https://tweakers.net/g/dpc/down.gif[/img]" . addDots($num*-1, '', 0) . ")[/]";
 		}
 	}
 return $num;
@@ -130,7 +138,7 @@ if ($Offset >= 0) {
 	SELECT s1.UserID, ifnull(s1.Keys1,0) - ifnull(s2.Keys1,0) AS DiffrenceKeys, ifnull(s1.Clicks,0) - ifnull(s2.Clicks,0) AS DiffrenceClicks
 	FROM whatpulse_aapdata AS s1, whatpulse_aapdata AS s2
 	WHERE s1.UserID = s2.userID and s1.datum = '$dag1'  AND s2.datum = '$dag2' AND s1.Username LIKE '%$search%'
-	ORDER  BY DiffrenceKeys DESC, DiffrenceClicks DESC
+	ORDER BY DiffrenceKeys DESC, DiffrenceClicks DESC
 	";
 
 	$result = $mysqli->query($query) or die($mysqli->error . __LINE__);
@@ -146,9 +154,11 @@ if ($Offset >= 0) {
 
 
 		$query = "
-SELECT s1.UserID as UserIDT, s1.Username as UsernameT, s1.Keys1 as Keys1T, s1.Clicks as ClicksT, s1.DownloadMB as DownloadMBT, s1.UploadMB as UploadMBT, s1.UptimeSeconds as UptimeSecondsT,
+SELECT s1.UserID as UserIDT, s1.Username as UsernameT, s1.Keys1 as Keys1T, s1.Clicks as ClicksT, s1.Scrolls as ScrollsT, s1.DistanceInMiles as DistanceT, s1.DownloadMB as DownloadMBT, s1.UploadMB as UploadMBT, s1.UptimeSeconds as UptimeSecondsT,
     ifnull(s1.Keys1,0) - ifnull(s2.Keys1,0) AS diffrence_keys,
     ifnull(s1.Clicks,0) - ifnull(s2.Clicks,0) AS diffrence_clicks,
+    ifnull(s1.Scrolls,0) - ifnull(s2.Scrolls,0) AS diffrence_Scrolls,
+    ifnull(s1.DistanceInMiles,0) - ifnull(s2.DistanceInMiles,0) AS diffrence_Distance,
     ifnull(s1.DownloadMB,0) - ifnull(s2.DownloadMB,0) AS diffrence_DownloadMB,
     ifnull(s1.UploadMB,0) - ifnull(s2.UploadMB,0) AS diffrence_UploadMB,
     s1.UptimeSeconds - s2.UptimeSeconds AS diffrence_UptimeSeconds,
@@ -156,6 +166,10 @@ SELECT s1.UserID as UserIDT, s1.Username as UsernameT, s1.Keys1 as Keys1T, s1.Cl
     s2.Rank_Keys - s1.Rank_Keys AS diffrence_Rank_Keys,
     s1.Rank_Clicks AS Rank_Clicks_today, s2.Rank_Clicks AS Rank_Clicks_yesterday,
     s2.Rank_Clicks - s1.Rank_Clicks AS diffrence_Rank_Clicks,
+    s1.Rank_Scrolls AS Rank_Scrolls_today, s2.Rank_Scrolls AS Rank_Scrolls_yesterday,
+    s2.Rank_Scrolls - s1.Rank_Scrolls AS diffrence_Rank_Scrolls,
+    s1.Rank_Distance AS Rank_Distance_today, s2.Rank_Distance AS Rank_Distance_yesterday,
+    s2.Rank_Distance - s1.Rank_Distance AS diffrence_Rank_Distance,
     s1.Rank_Download AS Rank_Download_today, s2.Rank_Download AS Rank_Download_yesterday,
     s2.Rank_Download - s1.Rank_Download AS diffrence_Rank_Download,
     s1.Rank_Upload AS Rank_Upload_today, s2.Rank_Upload AS Rank_Upload_yesterday,
@@ -269,19 +283,19 @@ WHERE datum = '$dag1' AND Username LIKE '%" . $search . "%'
 		}
 
 		if ($countadded == 0 && $countleft == 0) {
-			$xmladdleft = addColorDots(0);
+			$xmladdleft = addColorDots(0,'',0);
 			$xmluaddleft = "";
 		}
 		elseif ($countadded > 0 && $countleft < 0) {
-			$xmladdleft = addColorDots($countadded) . addColorDots($countleft);
+			$xmladdleft = addColorDots($countadded,'',0) . addColorDots($countleft,'',0);
 			$xmluaddleft = "[tr][th][green]Added[/]/[red]Left[/][/][td]" . $added . "," . $left . "[/][/]";
 		}
 		elseif ($countadded > 0) {
-			$xmladdleft = addColorDots($countadded);
+			$xmladdleft = addColorDots($countadded,'',0);
 			$xmluaddleft = "[tr][th][green]Added[/][/][td]" . $added . "[/][/]";
 		}
 		elseif ($countleft < 0) {
-			$xmladdleft = addColorDots($countleft);
+			$xmladdleft = addColorDots($countleft,'',0);
 			$xmluaddleft = "[tr][th][red]Left[/][/][td]" . $left . "[/][/]";
 		}
 
@@ -290,9 +304,11 @@ WHERE datum = '$dag1' AND Username LIKE '%" . $search . "%'
     //
 
 		$query = "
-SELECT s1.Team, sum(s1.Keys1) as Keys1T, sum(s1.Clicks) as ClicksT, sum(s1.DownloadMB) as DownloadMBT, sum(s1.UploadMB) as UploadMBT, sum(s1.UptimeSeconds) as UptimeSecondsT,
+SELECT s1.Team, sum(s1.Keys1) as Keys1T, sum(s1.Clicks) as ClicksT, sum(s1.Scrolls) as ScrollsT, sum(s1.DistanceInMiles) as DistanceT, sum(s1.DownloadMB) as DownloadMBT, sum(s1.UploadMB) as UploadMBT, sum(s1.UptimeSeconds) as UptimeSecondsT,
     sum(ifnull(s1.Keys1,0) - ifnull(s2.Keys1,0)) AS diffrence_keys,
     sum(ifnull(s1.Clicks,0) - ifnull(s2.Clicks,0)) AS diffrence_clicks,
+    sum(ifnull(s1.Scrolls,0) - ifnull(s2.Scrolls,0)) AS diffrence_Scrolls,
+	sum(ifnull(s1.DistanceInMiles,0) - ifnull(s2.DistanceInMiles,0)) AS diffrence_Distance,
     sum(ifnull(s1.DownloadMB,0) - ifnull(s2.DownloadMB,0)) AS diffrence_DownloadMB,
     sum(ifnull(s1.UploadMB,0) - ifnull(s2.UploadMB,0)) AS diffrence_UploadMB,
     sum(s1.UptimeSeconds - s2.UptimeSeconds) AS diffrence_UptimeSeconds,
@@ -324,12 +340,16 @@ SELECT s1.Team, sum(s1.Keys1) as Keys1T, sum(s1.Clicks) as ClicksT, sum(s1.Downl
 			$aantal++;
 			$Keys1T+= $values['Keys1T'];
 			$ClicksT+= $values['ClicksT'];
+			$ScrollsT+= $values['ScrollsT'];
+			$DistanceT+= $values['DistanceT'];
 			$DownloadMBT+= $values['DownloadMBT'];
 			$UploadMBT+= $values['UploadMBT'];
 			$UptimeSecondsT+= $values['UptimeSecondsT'];
 			$PulsesT+= $values['PulsesT'];
 			$diffrence_keys+= $values['diffrence_keys'];
 			$diffrence_clicks+= $values['diffrence_clicks'];
+			$diffrence_scrolls+= $values['diffrence_Scrolls'];
+			$diffrence_distance+= $values['diffrence_Distance'];
 			$diffrence_DownloadMB+= $values['diffrence_DownloadMB'];
 			$diffrence_UploadMB+= $values['diffrence_UploadMB'];
 			$diffrence_UptimeSeconds+= $values['diffrence_UptimeSeconds'];
@@ -340,27 +360,29 @@ SELECT s1.Team, sum(s1.Keys1) as Keys1T, sum(s1.Clicks) as ClicksT, sum(s1.Downl
 		// XML daily
     //
 
-		$xml = "[nosmilies][table border=1 width=800 fontsize=11 bgcolor=#FFFFFF]
-[tr][th bgcolor=#262A34 colspan=2][img=800,72]https://tweakers.net/ext/f/2dheVPycgBjdThsg19BVPDJY/full.png[/img][/][/]
-[tr][th bgcolor=#FFFFFF colspan=2 fontsize=20 align=center][b]Stats - " . $daglang . "[/][/][/]
-[tr][th]Keys[/][td]" . addDots($Keys1T, '') . " " . addColorDots($diffrence_keys) . "[/][/]
-[tr][th]Clicks[/][td]" . addDots($ClicksT, '') . " " . addColorDots($diffrence_clicks) . "[/][/]
-[tr][th]Download[/][td]" . addDots($DownloadMBT, 'MB') . " " . addColorDots($diffrence_DownloadMB, 'MB') . "[/][/]
-[tr][th]Upload[/][td]" . addDots($UploadMBT, 'MB') . " " . addColorDots($diffrence_UploadMB, 'MB') . "[/][/]
-[tr][th]Uptime[/][td]" . addDots($UptimeSecondsT, 'sec') . " " . addColorDots($diffrence_UptimeSeconds, 'sec') . "[/][/]
-[tr][th]Pulses[/][td]" . addDots($PulsesT, '') . " " . addColorDots($diffrence_Pulses) . "[/][/]
-[tr][th]Members[/][td]" . addDots($counttoday, '') . " " . $xmladdleft . "[/][/]" . $xmluaddleft . "
+		$xml = "[nosmilies][table border=1 width=800 fontsize=11]
+[tr][th bgcolor=#262A34 colspan=2][IMG=800,65]https://tweakers.net/i/hz22FOee9sarIvctQILgShlpLtg=/800x/filters:strip_exif()/f/image/7hcr87E0H98NSp3Ee1mtEqDA.png?f=fotoalbum_large[/IMG][/][/]
+[tr][th colspan=2 fontsize=20 align=center][b]Stats - " . $daglang . "[/][/][/]
+[tr][th]Keys[/][td]" . addDots($Keys1T, '', 0) . " " . addColorDots($diffrence_keys,'',0) . "[/][/]
+[tr][th]Clicks[/][td]" . addDots($ClicksT, '', 0) . " " . addColorDots($diffrence_clicks,'',0) . "[/][/]
+[tr][th]Scrolls[/][td]" . addDots($ScrollsT, '', 0) . " " . addColorDots($diffrence_scrolls,'',0) . "[/][/]
+[tr][th]Distance (km)[/][td]" . addDots(mi_km($DistanceT), 'km', 3) . " " . addColorDots(mi_km($diffrence_distance),'km',3) . "[/][/]
+[tr][th]Download[/][td]" . addDots($DownloadMBT, 'MB', 0) . " " . addColorDots($diffrence_DownloadMB,'MB',0) . "[/][/]
+[tr][th]Upload[/][td]" . addDots($UploadMBT, 'MB', 0) . " " . addColorDots($diffrence_UploadMB,'MB',0) . "[/][/]
+[tr][th]Uptime[/][td]" . addDots($UptimeSecondsT, 'sec', 0) . " " . addColorDots($diffrence_UptimeSeconds,'sec',0) . "[/][/]
+[tr][th]Pulses[/][td]" . addDots($PulsesT, '', 0) . " " . addColorDots($diffrence_Pulses,'',0) . "[/][/]
+[tr][th]Members[/][td]" . addDots($counttoday, '', 0) . " " . $xmladdleft . "[/][/]" . $xmluaddleft . "
 ";
 
     //
-		// Team
+		// Subteam
     //
 
-		$xml.= "[/][table border=1 width=800 fontsize=11 bgcolor=#FFFFFF]
-[tr][th bgcolor=#262A34 colspan=7][img=800,72]https://tweakers.net/ext/f/xo3qIkY9VqGx9Hvj3efounk9/full.png[/img][/][/]
-[tr][th]#[/][th]Team[/][th]Keys[/][th]Clicks[/][th]Download[/][th]Upload[/][th]Uptime[/][/]
+		$xml.= "[/][table border=1 width=800 fontsize=11]
+[tr][th bgcolor=#262A34 colspan=9][IMG=800,65]https://tweakers.net/i/WVJgTtDlzjbG8j6OV2oBW_cFSA4=/800x/filters:strip_exif()/f/image/bs8ZY2RBYclQdejLIgZSjAFu.png?f=fotoalbum_large[/IMG][/][/]
+[tr][th]#[/][th]Team[/][th]Keys[/][th]Clicks[/][th]Scrolls[/][th]Distance (km)[/][th]Download[/][th]Upload[/][th]Uptime[/][/]
 ";
-		for ($i = 0; $i < 16; $i++)
+		for ($i = 0; $i < 13; $i++)
 			{
 			$j++;
 			if ($Tarr[$i][0]['Team'] == '-')
@@ -368,22 +390,22 @@ SELECT s1.Team, sum(s1.Keys1) as Keys1T, sum(s1.Clicks) as ClicksT, sum(s1.Downl
 				$i++;
 				}
 
-			$xml.= "[tr][td][i]" . $j . "[/][/][td]" . $Tarr[$i][0]['Team'] . "[/][td][blue]" . addDotsKM($Tarr[$i][0]['Keys1T']) . "[/] " . addColorDots($Tarr[$i][0]['diffrence_keys']) . "[/]" . "[td]" . addDotsKM($Tarr[$i][0]['ClicksT']) . " " . addColorDots($Tarr[$i][0]['diffrence_clicks']) . "[/][td]" . addDotsGB($Tarr[$i][0]['DownloadMBT']) . " " . addColorDots($Tarr[$i][0]['diffrence_DownloadMB'], 'MB') . "[/][td]" . addDotsGB($Tarr[$i][0]['UploadMBT']) . " " . addColorDots($Tarr[$i][0]['diffrence_UploadMB'], 'MB') . "[/][td]" . addDotssec($Tarr[$i][0]['UptimeSecondsT'], 'uur') . " " . addColorDots($Tarr[$i][0]['diffrence_UptimeSeconds'], 'sec') . "[/][/]\n";
+			$xml.= "[tr][td][i]" . $j . "[/][/][td]" . $Tarr[$i][0]['Team'] . "[/][td][blue]" . addDotsKM($Tarr[$i][0]['Keys1T']) . "[/]" . addColorDots($Tarr[$i][0]['diffrence_keys'],'',0) . "[/][td]" . addDotsKM($Tarr[$i][0]['ClicksT']) . " " . addColorDots($Tarr[$i][0]['diffrence_clicks'],'',0) . "[/][td]" . addDotsKM($Tarr[$i][0]['ScrollsT']) . " " . addColorDots($Tarr[$i][0]['diffrence_Scrolls'],'',0) . "[/][td]" . addDotsKM($Tarr[$i][0]['DistanceT']) . " " . addColorDots($Tarr[$i][0]['diffrence_Distance'],'km',3) . "[/][td]" . addDotsGB($Tarr[$i][0]['DownloadMBT']) . " " . addColorDots($Tarr[$i][0]['diffrence_DownloadMB'],'MB',0) . "[/][td]" . addDotsGB($Tarr[$i][0]['UploadMBT']) . " " . addColorDots($Tarr[$i][0]['diffrence_UploadMB'],'MB',0) . "[/][td]" . addDotssec($Tarr[$i][0]['UptimeSecondsT'],'uur') . " " . addColorDots($Tarr[$i][0]['diffrence_UptimeSeconds'],'sec',0) . "[/][/]\n";
 			}
 
-		$xml.= "[tr][td bgcolor=#FFFFFF fontsize=11 colspan=8]Totaal zijn er [b]" . $teamC . " subteams[/] geregistreerd![/][/]\n";
+		$xml.= "[tr][td fontsize=11 colspan=8]Totaal zijn er [b]" . $teamC . " subteams[/] geregistreerd![/][/]\n";
 
     //
 		// Keys top 25
     //
 
-		$xml.= "[/][table border=1 width=800 fontsize=11 bgcolor=#FFFFFF]
-[tr][th bgcolor=#262A34 colspan=5][img=800,72]https://tweakers.net/ext/f/BLR5hXaNXPqpMa4lHvn1IOql/full.png[/img][/][/]
+		$xml.= "[/][table border=1 width=800 fontsize=11]
+[tr][th bgcolor=#262A34 colspan=5][IMG=800,65]https://tweakers.net/i/eIA306C3UpAdfhi7Okuv7m2Y504=/800x/filters:strip_exif()/f/image/CGlgOLQwfuQN8wJAJ1EN4bZ9.png?f=fotoalbum_large[/IMG][/][/]
 [tr][th]#[/][th]Rank[/][th]User[/][th]Keys[/][th]Clicks[/][/]
 ";
 		for ($i = 0; $i < 25; $i++)	{
 			$j = $i + 1;
-			$xml.= "[tr][td][i]" . $j . "[/][/][td]" . addDots($arr[$i]['Rank_Keys_today'],'') . " " . addColorDotsRank($arr[$i]['diffrence_Rank_Keys']) . "[/][td]" . $arr[$i]['UsernameT'] . "[/][td][blue]" . addDots($arr[$i]['Keys1T'],'') . "[/] " . addColorDots($arr[$i]['diffrence_keys']) . "[/]" . "[td]" . addDots($arr[$i]['ClicksT'],'') . " " . addColorDots($arr[$i]['diffrence_clicks']) . "[/][/]\n";
+			$xml.= "[tr][td][i]" . $j . "[/][/][td]" . addDots($arr[$i]['Rank_Keys_today'],'',0) . " " . addColorDotsRank($arr[$i]['diffrence_Rank_Keys']) . "[/][td]" . $arr[$i]['UsernameT'] . "[/][td][blue]" . addDots($arr[$i]['Keys1T'],'',0) . "[/] " . addColorDots($arr[$i]['diffrence_keys'],'',0) . "[/]" . "[td]" . addDots($arr[$i]['ClicksT'],'',0) . " " . addColorDots($arr[$i]['diffrence_clicks'],'',0) . "[/][/]\n";
 		}
 
     //
@@ -399,14 +421,14 @@ SELECT s1.Team, sum(s1.Keys1) as Keys1T, sum(s1.Clicks) as ClicksT, sum(s1.Downl
 		}
 
 		usort($arr, 'keySort');
-		$xml.= "[/][table border=1 width=800 fontsize=11 bgcolor=#FFFFFF]
-[tr][th bgcolor=#262A34 colspan=5][img=800,72]https://tweakers.net/ext/f/GxBF1O0vbZrCnP97l8ggMWSQ/full.png[/img][/][/]
+		$xml.= "[/][table border=1 width=800 fontsize=11]
+[tr][th bgcolor=#262A34 colspan=5][IMG=800,65]https://tweakers.net/i/AeianazjGevCbMKDhp67sWJyBNo=/800x/filters:strip_exif()/f/image/zymLUpFo7l3nFtwNeH1DoVcd.png?f=fotoalbum_large[/IMG][/][/]
 [tr][th]#[/][th]Rank[/][th]User[/][th]Keys[/][th]Clicks[/][/]
 ";
-		for ($i = 0; $i < 20; $i++)
+		for ($i = 0; $i < 15; $i++)
 			{
 			$j = $i + 1;
-			$xml.= "[tr][td][i]" . $j . "[/][/][td]" . addDots($arr[$i]['Rank_Keys_today'], '') . " " . addColorDotsRank($arr[$i]['diffrence_Rank_Keys']) . "[/][td]" . $arr[$i]['UsernameT'] . "[/][td][blue]" . addDots($arr[$i]['Keys1T'], '') . "[/] " . addColorDots($arr[$i]['diffrence_keys']) . "[/]" . "[td]" . addDots($arr[$i]['ClicksT'], '') . " " . addColorDots($arr[$i]['diffrence_clicks']) . "[/][/]\n";
+			$xml.= "[tr][td][i]" . $j . "[/][/][td]" . addDots($arr[$i]['Rank_Keys_today'],'',0) . " " . addColorDotsRank($arr[$i]['diffrence_Rank_Keys']) . "[/][td]" . $arr[$i]['UsernameT'] . "[/][td][blue]" . addDots($arr[$i]['Keys1T'],'',0) . "[/] " . addColorDots($arr[$i]['diffrence_keys'],'',0) . "[/]" . "[td]" . addDots($arr[$i]['ClicksT'],'',0) . " " . addColorDots($arr[$i]['diffrence_clicks'],'',0) . "[/][/]\n";
 			}
 
     //
@@ -422,14 +444,52 @@ SELECT s1.Team, sum(s1.Keys1) as Keys1T, sum(s1.Clicks) as ClicksT, sum(s1.Downl
 		}
 
 		usort($arr, 'clickSort');
-		$xml.= "[/][table border=1 width=800 fontsize=11 bgcolor=#FFFFFF]
-[tr][th bgcolor=#262A34 colspan=5][img=800,72]https://tweakers.net/ext/f/3BrlOKCFUqQwCuBVLO9AmSic/full.png[/img][/][/]
+		$xml.= "[/][table border=1 width=800 fontsize=11]
+[tr][th bgcolor=#262A34 colspan=5][IMG=800,65]https://tweakers.net/i/yk6NuL3K84b36aNfK_zXKhFZS00=/800x/filters:strip_exif()/f/image/Ny1q5tWlGO0gLKWPHmQCIuB8.png?f=fotoalbum_large[/IMG][/][/]
 [tr][th]#[/][th]Rank[/][th]User[/][th]Keys[/][th]Clicks[/][/]
 ";
-		for ($i = 0; $i < 20; $i++) {
+		for ($i = 0; $i < 15; $i++) {
 			$j = $i + 1;
-			$xml.= "[tr][td][i]" . $j . "[/][/][td]" . addDots($arr[$i]['Rank_Clicks_today'], '') . " " . addColorDotsRank($arr[$i]['diffrence_Rank_Clicks']) . "[/][td]" . $arr[$i]['UsernameT'] . "[/][td]" . addDots($arr[$i]['Keys1T'], '') . " " . addColorDots($arr[$i]['diffrence_keys']) . "[/]" . "[td][blue]" . addDots($arr[$i]['ClicksT'], '') . "[/] " . addColorDots($arr[$i]['diffrence_clicks']) . "[/][/]\n";
+			$xml.= "[tr][td][i]" . $j . "[/][/][td]" . addDots($arr[$i]['Rank_Clicks_today'],'',0) . " " . addColorDotsRank($arr[$i]['diffrence_Rank_Clicks']) . "[/][td]" . $arr[$i]['UsernameT'] . "[/][td]" . addDots($arr[$i]['Keys1T'],'',0) . " " . addColorDots($arr[$i]['diffrence_keys'],'',0) . "[/]" . "[td][blue]" . addDots($arr[$i]['ClicksT'],'',0) . "[/] " . addColorDots($arr[$i]['diffrence_clicks'],'',0) . "[/][/]\n";
 		}
+
+    //
+		// Scrolls
+    //
+
+	function scrollsSort($item1, $item2) {
+		if ($item1['diffrence_Scrolls'] == $item2['diffrence_Scrolls']) return 0;
+		return ($item1['diffrence_Scrolls'] < $item2['diffrence_Scrolls']) ? 1 : -1;
+	}
+
+	usort($arr, 'scrollsSort');
+	$xml.= "[/][table border=1 width=800 fontsize=11]
+[tr][th bgcolor=#262A34 colspan=6][IMG=800,65]https://tweakers.net/i/Kse-75knnmIiH2RF4gcgz_Vb8qs=/800x/filters:strip_exif()/f/image/vy0EkR6Mg0yJw2JggY69JSxv.png?f=fotoalbum_large[/IMG][/][/]
+[tr][th]#[/][th]Rank[/][th]User[/][th]Scrolls[/][th]Distance (km)[/][/]
+";
+	for ($i = 0; $i < 15; $i++) {
+		$j = $i + 1;
+		$xml.= "[tr][td][i]" . $j . "[/][/][td]" . addDots($arr[$i]['Rank_Scrolls_today'],'',0) . " " . addColorDotsRank($arr[$i]['diffrence_Rank_Scrolls']) . "[/][td]" . $arr[$i]['UsernameT'] . "[/][td][blue]" . addDots($arr[$i]['ScrollsT'],'',0) . "[/] " . addColorDots($arr[$i]['diffrence_Scrolls'],'',0) . "[/][td]" . addDots(mi_km($arr[$i]['DistanceT']),'km',3) . " " . addColorDots(mi_km($arr[$i]['diffrence_Distance']),'km',3) . "[/][/]\n";
+	}
+
+    //
+		// Distance
+    //
+
+	function distanceSort($item1, $item2) {
+		if ($item1['diffrence_Distance'] == $item2['diffrence_Distance']) return 0;
+		return ($item1['diffrence_Distance'] < $item2['diffrence_Distance']) ? 1 : -1;
+	}
+
+	usort($arr, 'distanceSort');
+	$xml.= "[/][table border=1 width=800 fontsize=11]
+[tr][th bgcolor=#262A34 colspan=6][IMG=800,65]https://tweakers.net/i/pmCJsNBA4W_v3itRdiG24lKtIZk=/800x/filters:strip_exif()/f/image/ltCV8vZHSXVzFCH4nZrHs6xT.png?f=fotoalbum_large[/IMG][/][/]
+[tr][th]#[/][th]Rank[/][th]User[/][th]Scrolls[/][th]Distance (km)[/][/]
+";
+	for ($i = 0; $i < 15; $i++) {
+		$j = $i + 1;
+		$xml.= "[tr][td][i]" . $j . "[/][/][td]" . addDots($arr[$i]['Rank_Scrolls_today'],'',0) . " " . addColorDotsRank($arr[$i]['diffrence_Rank_Scrolls']) . "[/][td]" . $arr[$i]['UsernameT'] . "[/][td]" . addDots($arr[$i]['ScrollsT'],'',0) . " " . addColorDots($arr[$i]['diffrence_Scrolls'],'',0) . "[td][blue]" . addDots(mi_km($arr[$i]['DistanceT']),'km',3) . " " . addColorDots(mi_km($arr[$i]['diffrence_Distance']),'km',3) . "[/][/][/]\n";
+	}
 
     //
 		// Download
@@ -441,13 +501,13 @@ SELECT s1.Team, sum(s1.Keys1) as Keys1T, sum(s1.Clicks) as ClicksT, sum(s1.Downl
 		}
 
 		usort($arr, 'downloadSort');
-		$xml.= "[/][table border=1 width=800 fontsize=11 bgcolor=#FFFFFF]
-[tr][th bgcolor=#262A34 colspan=6][img=800,72]https://tweakers.net/ext/f/4jVO47sgl0hgwuOABzijosU3/full.png[/img][/][/]
+		$xml.= "[/][table border=1 width=800 fontsize=11]
+[tr][th bgcolor=#262A34 colspan=6][IMG=800,65]https://tweakers.net/i/Ni2fbW6EtHO7jhVAD9tyMegYYwo=/800x/filters:strip_exif()/f/image/kZnyclAdeegao1zK2Vd1z5fM.png?f=fotoalbum_large[/IMG][/][/]
 [tr][th]#[/][th]Rank[/][th]User[/][th]Download[/][th]Upload[/][th]Uptime[/][/]
 ";
-		for ($i = 0; $i < 20; $i++) {
+		for ($i = 0; $i < 15; $i++) {
 			$j = $i + 1;
-			$xml.= "[tr][td][i]" . $j . "[/][/][td]" . addDots($arr[$i]['Rank_Download_today'], '') . " " . addColorDotsRank($arr[$i]['diffrence_Rank_Download']) . "[/][td]" . $arr[$i]['UsernameT'] . "[/][td][blue]" . addDotsGB($arr[$i]['DownloadMBT']) . "[/] " . addColorDots($arr[$i]['diffrence_DownloadMB'], 'MB') . "[/][td]" . addDotsGB($arr[$i]['UploadMBT']) . " " . addColorDots($arr[$i]['diffrence_UploadMB'], 'MB') . "[/][td]" . addDotssec($arr[$i]['UptimeSecondsT'], 'uur') . " " . addColorDots($arr[$i]['diffrence_UptimeSeconds'], 'sec') . "[/][/]\n";
+			$xml.= "[tr][td][i]" . $j . "[/][/][td]" . addDots($arr[$i]['Rank_Download_today'],'',0) . " " . addColorDotsRank($arr[$i]['diffrence_Rank_Download']) . "[/][td]" . $arr[$i]['UsernameT'] . "[/][td][blue]" . addDotsGB($arr[$i]['DownloadMBT']) . "[/] " . addColorDots($arr[$i]['diffrence_DownloadMB'],'MB',0) . "[/][td]" . addDotsGB($arr[$i]['UploadMBT']) . " " . addColorDots($arr[$i]['diffrence_UploadMB'],'MB',0) . "[/][td]" . addDotssec($arr[$i]['UptimeSecondsT'], 'uur') . " " . addColorDots($arr[$i]['diffrence_UptimeSeconds'],'sec',0) . "[/][/]\n";
 		}
 
     //
@@ -460,13 +520,13 @@ SELECT s1.Team, sum(s1.Keys1) as Keys1T, sum(s1.Clicks) as ClicksT, sum(s1.Downl
 		}
 
 		usort($arr, 'uploadSort');
-		$xml.= "[/][table border=1 width=800 fontsize=11 bgcolor=#FFFFFF]
-[tr][th bgcolor=#262A34 colspan=6][img=800,72]https://tweakers.net/ext/f/x7OTy2nxMhfLT6rHef6NeIyW/full.png[/img][/][/]
+		$xml.= "[/][table border=1 width=800 fontsize=11]
+[tr][th bgcolor=#262A34 colspan=6][IMG=800,65]https://tweakers.net/i/-Q4_Rmc6tPN4BydTYDAU-wtjk-Q=/800x/filters:strip_exif()/f/image/JS9L7TTwp878N2ooSfzjZ0Ph.png?f=fotoalbum_large[/IMG][/][/]
 [tr][th]#[/][th]Rank[/][th]User[/][th]Download[/][th]Upload[/][th]Uptime[/][/]
 ";
-		for ($i = 0; $i < 20; $i++) {
+		for ($i = 0; $i < 15; $i++) {
 			$j = $i + 1;
-			$xml.= "[tr][td][i]" . $j . "[/][/][td]" . addDots($arr[$i]['Rank_Upload_today'], '') . " " . addColorDotsRank($arr[$i]['diffrence_Rank_Upload']) . "[/][td]" . $arr[$i]['UsernameT'] . "[/][td]" . addDotsGB($arr[$i]['DownloadMBT']) . " " . addColorDots($arr[$i]['diffrence_DownloadMB'], 'MB') . "[/][td][blue]" . addDotsGB($arr[$i]['UploadMBT']) . "[/] " . addColorDots($arr[$i]['diffrence_UploadMB'], 'MB') . "[/][td]" . addDotssec($arr[$i]['UptimeSecondsT'], 'uur') . " " . addColorDots($arr[$i]['diffrence_UptimeSeconds'], 'sec') . "[/][/]\n";
+			$xml.= "[tr][td][i]" . $j . "[/][/][td]" . addDots($arr[$i]['Rank_Upload_today'],'',0) . " " . addColorDotsRank($arr[$i]['diffrence_Rank_Upload']) . "[/][td]" . $arr[$i]['UsernameT'] . "[/][td]" . addDotsGB($arr[$i]['DownloadMBT']) . " " . addColorDots($arr[$i]['diffrence_DownloadMB'],'MB',0) . "[/][td][blue]" . addDotsGB($arr[$i]['UploadMBT']) . "[/] " . addColorDots($arr[$i]['diffrence_UploadMB'],'MB',0) . "[/][td]" . addDotssec($arr[$i]['UptimeSecondsT'], 'uur') . " " . addColorDots($arr[$i]['diffrence_UptimeSeconds'],'sec',0) . "[/][/]\n";
 		}
 
     //
@@ -479,13 +539,13 @@ SELECT s1.Team, sum(s1.Keys1) as Keys1T, sum(s1.Clicks) as ClicksT, sum(s1.Downl
 		}
 
 		usort($arr, 'uptimeSort');
-		$xml.= "[/][table border=1 width=800 fontsize=11 bgcolor=#FFFFFF]
-[tr][th bgcolor=#262A34 colspan=6][img=800,72]https://tweakers.net/ext/f/bBsyrm1mfPdmVhvmArF4frHe/full.png[/img][/][/]
+		$xml.= "[/][table border=1 width=800 fontsize=11]
+[tr][th bgcolor=#262A34 colspan=6][IMG=800,65]https://tweakers.net/i/VSgWDAkA1F6cUFww7CSIkTUf8dg=/800x/filters:strip_exif()/f/image/YzRlcVvaB83Y9XnI5jMaijaA.png?f=fotoalbum_large[/IMG][/][/]
 [tr][th]#[/][th]Rank[/][th]User[/][th]Download[/][th]Upload[/][th]Uptime[/][/]
 ";
-		for ($i = 0; $i < 20; $i++)	{
+		for ($i = 0; $i < 15; $i++)	{
 			$j = $i + 1;
-			$xml.= "[tr][td][i]" . $j . "[/][/][td]" . addDots($arr[$i]['Rank_Upload_today'], '') . " " . addColorDotsRank($arr[$i]['diffrence_Rank_Upload']) . "[/][td]" . $arr[$i]['UsernameT'] . "[/][td]" . addDotsGB($arr[$i]['DownloadMBT']) . " " . addColorDots($arr[$i]['diffrence_DownloadMB'], 'MB') . "[/][td]" . addDotsGB($arr[$i]['UploadMBT']) . " " . addColorDots($arr[$i]['diffrence_UploadMB'], 'MB') . "[/][td][blue]" . addDotssec($arr[$i]['UptimeSecondsT'], 'uur') . "[/] " . addColorDots($arr[$i]['diffrence_UptimeSeconds'], 'sec') . "[/][/]\n";
+			$xml.= "[tr][td][i]" . $j . "[/][/][td]" . addDots($arr[$i]['Rank_Upload_today'],'',0) . " " . addColorDotsRank($arr[$i]['diffrence_Rank_Upload']) . "[/][td]" . $arr[$i]['UsernameT'] . "[/][td]" . addDotsGB($arr[$i]['DownloadMBT']) . " " . addColorDots($arr[$i]['diffrence_DownloadMB'],'MB',0) . "[/][td]" . addDotsGB($arr[$i]['UploadMBT']) . " " . addColorDots($arr[$i]['diffrence_UploadMB'],'MB',0) . "[/][td][blue]" . addDotssec($arr[$i]['UptimeSecondsT'], 'uur') . "[/] " . addColorDots($arr[$i]['diffrence_UptimeSeconds'],'sec',0) . "[/][/]\n";
 		}
 
     //
@@ -493,7 +553,7 @@ SELECT s1.Team, sum(s1.Keys1) as Keys1T, sum(s1.Clicks) as ClicksT, sum(s1.Downl
     //
 
 		$xml.= "[/][/]";
-    $xml.= "[b][small][br]Stats site= [url=https://www.grandmasg.nl/WPNEW/#/daily/0/-]WhatPulse stats![/][br]Source= [url=https://github.com/Grandmasg/WPNEW]Github team stats[/][/][/]
+    $xml.= "[b][small][br]Stats site= [url=https://www.grandmasg.nl/WPNEW/#/daily/0/-]WhatPulse stats![/][br]Source= [url=https://github.com/Grandmasg/WPNEW]Github team stats[/][/][/]";
 		$xml = str_replace("]", "&#093;", $xml);
 		echo $xml;
 

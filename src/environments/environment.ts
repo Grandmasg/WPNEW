@@ -6,7 +6,7 @@ export const environment = {
   production: false,
   appVersion: require('../../package.json').version + '-dev',
   appName: require('../../package.json').name,
-  url: 'http://localhost:8080/api',
+  url: 'http://localhost:80/api',
 };
 
 /*

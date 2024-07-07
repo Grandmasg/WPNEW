@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -35,40 +35,39 @@ import { NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import { NgbDateNLParserFormatter } from './ngb-date-nl-parser-formatter';
 
 import { HighchartsChartModule } from 'highcharts-angular';
-@NgModule({
-  declarations: [
-    AppComponent,
-    StatsComponent,
-    OverallComponent,
-    XmlComponent,
-    ValuePipe,
-    HighlightSearchPipe,
-    UnescapePipe
-  ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    AppRoutingModule,
-    HttpClientModule,
-    ClipboardModule,
-    NgxSpinnerModule,
-    FontAwesomeModule,
-    NgbModule,
-    FormsModule,
-    MatCardModule,
-    MatFormFieldModule,
-    MatDatepickerModule,
-    MatTableModule,
-    MatSortModule,
-    MatPaginatorModule,
-    MatInputModule,
-    MatNativeDateModule,
-    ReactiveFormsModule,
-    HighchartsChartModule
-  ],
-  providers:  [
-    {provide: NgbDateParserFormatter, useClass: NgbDateNLParserFormatter},
-    HighlightSearchPipe],
-  bootstrap: [AppComponent]
-})
+
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
+@NgModule({ declarations: [
+        AppComponent,
+        StatsComponent,
+        OverallComponent,
+        XmlComponent,
+        ValuePipe,
+        HighlightSearchPipe,
+        UnescapePipe
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        BrowserAnimationsModule,
+        AppRoutingModule,
+        ClipboardModule,
+        NgxSpinnerModule,
+        FontAwesomeModule,
+        NgbModule,
+        FormsModule,
+        MatCardModule,
+        MatFormFieldModule,
+        MatDatepickerModule,
+        MatTableModule,
+        MatSortModule,
+        MatPaginatorModule,
+        MatInputModule,
+        MatNativeDateModule,
+        ReactiveFormsModule,
+        HighchartsChartModule,
+        MatProgressSpinnerModule], providers: [
+        { provide: NgbDateParserFormatter, useClass: NgbDateNLParserFormatter },
+        HighlightSearchPipe,
+        provideHttpClient(withInterceptorsFromDi())
+    ] })
 export class AppModule { }

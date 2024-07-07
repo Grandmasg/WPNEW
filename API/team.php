@@ -26,7 +26,7 @@ while ($row = $result->fetch_assoc()) {
 
 // JSON-encode the response
 $json_response = json_encode(['data'=>$team], JSON_NUMERIC_CHECK);
-if ($Offset == 0) {} else {file_put_contents('Teamdata/team_'.$dag1.'.json',$json_response);};
+
 // # Return the response
 echo $json_response;
 ?>

@@ -10,12 +10,13 @@ import { Title } from '@angular/platform-browser';
 import { DomSanitizer } from '@angular/platform-browser';
 import * as Highcharts from 'highcharts';
 import { Options } from 'highcharts';
-require('highcharts/themes/dark-unica')(Highcharts);
+import theme from 'highcharts/themes/dark-unica';
+theme(Highcharts);
+//require('highcharts/themes/dark-unica')(Highcharts);
 declare var require: any;
 
-import { Stats, Team, ALC } from '../stats/stats';
+import { Stats, Team, ALC, users } from '../stats/stats';
 import { StatsService } from '../stats/stats.service';
-
 
 @Component({
   selector: 'app-stats',
@@ -23,6 +24,7 @@ import { StatsService } from '../stats/stats.service';
   styleUrls: ['./stats.component.scss'],
 })
 export class StatsComponent implements OnInit {
+  //isLoading: Subject<boolean> = this.loaderService.isLoading;
   Highcharts: typeof Highcharts = Highcharts;
   @HostBinding('class') className = '';
   version: any;
@@ -33,12 +35,12 @@ export class StatsComponent implements OnInit {
   stats: Stats[] = [];
   teams: Team[] = [];
   ALC: ALC[] = [];
+  users: users[] = [];
   ALCchanged: any;
   ALCadded: any;
   ALCleft: any;
   error: string = "";
   loading = false;
-  Changeloading: any;
   date = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
   date2: any;
   date3: any;
@@ -51,6 +53,8 @@ export class StatsComponent implements OnInit {
   strGraph: any;
   TKeys: number = 0;
   TClicks: number = 0;
+  TScrolls: number = 0;
+  TDistance: number = 0.000;
   TDownload: number = 0;
   TUpload: number = 0;
   TUptime: number = 0;
@@ -58,7 +62,7 @@ export class StatsComponent implements OnInit {
   length: number = 0;
   User: string = '';
   UserURL: string = '';
-  displayedColumns: string[] = ['today', 'Username', 'StatsKeys', 'StatsClicks', 'StatsDownloadMB', 'StatsUploadMB', 'StatsUptimeSeconds', 'StatsPulses'];
+  displayedColumns: string[] = ['today', 'Username', 'StatsKeys', 'StatsClicks', 'StatsScrolls', 'StatsDistance', 'StatsDownloadMB', 'StatsUploadMB', 'StatsUptimeSeconds', 'StatsPulses'];
   pageSize = 25;
   pageIndex = 0;
   dataG: any;
@@ -175,7 +179,8 @@ export class StatsComponent implements OnInit {
     private router: Router,
     public sanitizer: DomSanitizer,
     private spinner: NgxSpinnerService,
-    private titleService: Title
+    private titleService: Title,
+    //private loaderService: LoaderService
   ) { }
 
   model = {
@@ -213,6 +218,11 @@ export class StatsComponent implements OnInit {
   Loading() {
     this.spinner.show();
     this.loading = true;
+  }
+
+  Stoploading() {
+    this.spinner.hide();
+    this.loading = false;
   }
 
   Change(id: string) {
@@ -322,6 +332,19 @@ export class StatsComponent implements OnInit {
     );
   }
 
+  getData(): void {
+    this.users = [];
+    this.statsService.getData().subscribe(
+      data => {
+        this.users = data;
+        console.log(data)
+      },
+      (err) => {
+        this.error = err;
+      }
+    );
+  }
+
   getStats(): void {
     this.dataSource.data = [];
     this.dataSource.filter = '';
@@ -349,8 +372,7 @@ export class StatsComponent implements OnInit {
         if (this.option === 'daily') {
           this.GraphG();
         }
-        this.spinner.hide();
-        this.loading = false;
+        this.Stoploading();
       },
       (err) => {
         this.error = err;
@@ -362,13 +384,18 @@ export class StatsComponent implements OnInit {
     if (val1 === null) {
       val1 = '-';
     }
-    return 'Today: ' + val + '\nYesterday: ' + val1;
+    if (this.option === 'weekly') {return 'This week: ' + val + '\nLast week: ' + val1;}
+    if (this.option === 'monthly') {return 'This month: ' + val + '\nLast month: ' + val1;}
+    if (this.option === 'yearly') {return 'This year: ' + val + '\nLast year: ' + val1;}
+    else return 'Today: ' + val + '\nYesterday: ' + val1;
   }
 
   Sum() {
     this.length = this.stats.length;
     this.TKeys = this.stats.reduce((sum, item) => sum + item.StatsKeys, 0);
     this.TClicks = this.stats.reduce((sum, item) => sum + item.StatsClicks, 0);
+    this.TScrolls = this.stats.reduce((sum, item) => sum + item.StatsScrolls, 0);
+    this.TDistance = this.stats.reduce((sum, item) => sum + item.StatsDistance, 0);
     this.TDownload = this.stats.reduce((sum, item) => sum + item.StatsDownloadMB, 0);
     this.TUpload = this.stats.reduce((sum, item) => sum + item.StatsUploadMB, 0);
     this.TUptime = this.stats.reduce((sum, item) => sum + item.StatsUptimeSeconds, 0);
@@ -376,8 +403,6 @@ export class StatsComponent implements OnInit {
   }
 
   Click() {
-    //this.stats = this.dataSource.sortData(this.dataSource.filteredData, this.dataSource.sort!);
-    //this.dataSource.sort = this.sort;
     this.str = '';
     this.Graph();
   }
@@ -410,33 +435,41 @@ export class StatsComponent implements OnInit {
     if (val === 'line') {
       this.gr = val;
       this.chartOptions.chart = this.chartOptions1.chart = {
-        type: 'column',
+        type: this.gr,
       };
       this.chartOptions.series[0] = this.chartOptions.series[1] = this.chartOptions1.series[0] = this.chartOptions1.series[1] = {
-        type: 'line'
+        type: this.gr,
+        dataLabels: {
+          rotation: 0,
+        }
       };
       this.updateFlag = true;
     }
     if (val === 'column') {
       this.gr = val;
       this.chartOptions.chart = this.chartOptions1.chart = {
-        type: 'column',
+        type: this.gr,
       };
       this.chartOptions.series[0] = this.chartOptions.series[1] = this.chartOptions1.series[0] = this.chartOptions1.series[1] = {
-        type: this.gr
+        type: this.gr,
+        dataLabels: {
+          rotation: -90,
+        }
       };
       this.updateFlag = true;
     }this.dataG.length
     if (val === 'bar') {
       this.gr = val;
-      //this.height = 600;
       this.chartOptions.chart = this.chartOptions1.chart = {
-        type: this.gr,
-        height: this.height
+        type: this.gr
       };
       this.chartOptions.series[0] = this.chartOptions.series[1] = this.chartOptions1.series[0] = this.chartOptions1.series[1] = {
-        type: 'column'
+        type: this.gr,
+        dataLabels: {
+          rotation: 0,
+        }
       };
+
       this.updateFlag = true;
     }
   }
@@ -478,8 +511,10 @@ export class StatsComponent implements OnInit {
       dataLabels: {
         enabled: true,
         allowOverlap: true,
-        y: -30,
-        rotation: -90
+        rotation: -90,
+        style: {
+          fontSize: '11px'
+        }
       }
     }
     for (this.i = this.start; this.i < this.end; this.i++) {
@@ -492,8 +527,10 @@ export class StatsComponent implements OnInit {
       dataLabels: {
         enabled: true,
         allowOverlap: true,
-        y: -30,
-        rotation: -90
+        rotation: -90,
+        style: {
+          fontSize: '11px'
+        }
       }
     };
     this.updateFlag = true;
@@ -529,8 +566,10 @@ export class StatsComponent implements OnInit {
       dataLabels: {
         enabled: true,
         allowOverlap: true,
-        y: -30,
-        rotation: -90
+        rotation: -90,
+        style: {
+          fontSize: '11px'
+        }
       }
     };
     for (this.i = this.startG; this.i < this.endG; this.i++) {
@@ -547,12 +586,13 @@ export class StatsComponent implements OnInit {
       dataLabels: {
         enabled: true,
         allowOverlap: true,
-        y: -30,
-        rotation: -90
+        rotation: -90,
+        style: {
+          fontSize: '11px'
+        }
       }
     };
     this.updateFlag = true;
-
 
     this.strGraph = '{"chart": {"valueBgColor": "#4e4e4e", "valueBgAlpha": "100", "caption": "' + this.titleCaseWord(this.option) + ' stats last 21 days", "theme": "DeApen", "showValues": "1", "rotateValues": "1", "labelDisplay": "rotate", ' + '"slantLabel": "1", "valueFontSize": "10"},"categories": [{ "category": [';
     for (this.i = this.startG; this.i < this.endG; this.i++) {
